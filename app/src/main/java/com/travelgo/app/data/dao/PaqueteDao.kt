@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.travelgo.app.data.model.PaqueteLocal
+import com.travelgo.app.data.db.PaqueteLocal
 import kotlinx.coroutines.flow.Flow
 
 @Dao

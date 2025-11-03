@@ -1,4 +1,4 @@
-package com.travelgo.app.data.model
+package com.travelgo.app.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,6 +9,6 @@ data class PaqueteLocal(
     val nombre: String,
     val descripcion: String,
     val precio: Int,
-    val imagenUri: String? = null, // guardamos URI como String
+    val imagenUri: String? = null,
     val creadoAt: Long = System.currentTimeMillis()
 )
