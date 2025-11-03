@@ -1,0 +1,1 @@
+# No shrink rules (debug).
