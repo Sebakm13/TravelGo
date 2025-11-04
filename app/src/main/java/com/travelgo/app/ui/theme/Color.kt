@@ -1,5 +1,6 @@
 package com.travelgo.app.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 
 // 🌞 Paleta de colores claros (modo claro)
@@ -18,3 +19,5 @@ val DarkTextPrimary = Color(0xFFE5E7EB)     // Texto claro
 // 🎯 Alias (compatibilidad con temas antiguos)
 val Accent = VerdePrimario
 val AccentSecondary = VerdeSecundario
+
+
