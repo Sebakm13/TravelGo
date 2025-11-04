@@ -57,6 +57,11 @@ android {
     dependencies {
         // Compose + Material3
         implementation "androidx.room:room-runtime:2.6.1"
+        implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+        implementation("com.google.firebase:firebase-firestore-ktx")
+        implementation("com.google.firebase:firebase-common-ktx")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
         kapt "androidx.room:room-compiler:2.6.1"
         implementation "androidx.core:core-ktx:1.12.0"
         implementation "androidx.activity:activity-compose:1.8.0"
