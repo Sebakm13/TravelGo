@@ -6,7 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.travelgo.app.ui.PaqueteViewModel
+import com.travelgo.app.ui.components.TopBarWithBack
 
 @Composable
 fun PaqueteListScreen(viewModel: PaqueteViewModel, onAdd: () -> Unit, onOpen: (Long) -> Unit) {
@@ -14,6 +16,8 @@ fun PaqueteListScreen(viewModel: PaqueteViewModel, onAdd: () -> Unit, onOpen: (L
         floatingActionButton = {
             FloatingActionButton(onClick = onAdd) { Text("+") }
         }
+
+
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             viewModel.paquetes.forEach { paquete ->

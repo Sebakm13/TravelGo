@@ -29,17 +29,14 @@ import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import com.travelgo.app.ui.components.ImagePickerDialog
+import com.travelgo.app.ui.components.TopBarWithBack
 import com.travelgo.app.viewmodel.ProfileUiState
 import com.travelgo.app.viewmodel.ProfileViewModel
 import java.io.File
@@ -65,6 +62,8 @@ private fun createImageUri(context: Context): Uri? {
 }
 
 
+
+
 @Composable
 fun PerfilScreen(
     navController: NavController,
@@ -79,6 +78,14 @@ fun PerfilScreen(
 
     var localImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     var locationText by rememberSaveable { mutableStateOf("Ubicación no obtenida") }
+
+    Scaffold(
+        topBar = { TopBarWithBack(navController, title = "Mi Perfil") }
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Text("volver a la pagina de inicio")
+        }
+    }
 
     LaunchedEffect(Unit) {
         val savedName = prefs.getName()

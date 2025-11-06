@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.travelgo.app.ui.components.TopBarWithBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+
 
 @Composable
 fun ReservaScreen(
@@ -50,6 +53,13 @@ fun ReservaScreen(
         } else personasError = null
 
         return ok
+    }
+    Scaffold(
+        topBar = { TopBarWithBack(navController, title = "Mi Perfil") }
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Text("volver a la pagina de inicio")
+        }
     }
 
     Column(

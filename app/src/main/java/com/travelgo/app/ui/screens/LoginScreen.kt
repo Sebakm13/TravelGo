@@ -11,6 +11,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.travelgo.app.data.datastore.UserPrefsDataStore
+import com.travelgo.app.ui.components.TopBarWithBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -29,6 +30,7 @@ fun LoginScreen(
 
     var loading by remember { mutableStateOf(false) }
     var loginError by remember { mutableStateOf<String?>(null) }
+
 
     fun validate(): Boolean {
         var ok = true

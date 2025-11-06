@@ -26,10 +26,10 @@ fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController
         composable("detail/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")?.toLongOrNull() ?: return@composable
             PaqueteDetailScreen(
+                navController = navController, // ✅ agregado
                 id = id,
                 viewModel = viewModel,
-                onEdit = { navController.navigate("edit/$id") },
-                onBack = { navController.popBackStack() }
+                onEdit = { navController.navigate("edit/$id") }
             )
         }
 
@@ -44,15 +44,16 @@ fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController
         ) { backStack ->
             val idArg = backStack.arguments?.getString("id")?.toLongOrNull()
             PaqueteEditScreen(
+                navController = navController, // ✅ agregado
                 editId = idArg,
                 viewModel = viewModel,
                 onDone = { navController.popBackStack() }
             )
         }
 
-        // Para crear nuevo paquete
         composable("edit") {
             PaqueteEditScreen(
+                navController = navController, // ✅ agregado
                 editId = null,
                 viewModel = viewModel,
                 onDone = { navController.popBackStack() }
