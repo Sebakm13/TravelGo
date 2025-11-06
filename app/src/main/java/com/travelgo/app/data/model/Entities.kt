@@ -1,6 +1,5 @@
 package com.travelgo.app.data.model
 
-// Paquete Turístico
 data class PaqueteTuristico(
     val id: String,
     val titulo: String,
@@ -8,7 +7,7 @@ data class PaqueteTuristico(
     val precioPorPersona: Int,
     val destino: String,
     val imagenUrl: String,
-    val enfoqueSustentable: String // ej: "turismo comunitario", "carbono neutral"
+    val enfoqueSustentable: String
 )
 
 // Cliente
@@ -32,7 +31,7 @@ data class Pago(
     val id: String,
     val reservaId: String,
     val montoTotal: Int,
-    val metodo: String // "Tarjeta", "Transferencia"
+    val metodo: String
 )
 
 // Itinerario
@@ -43,7 +42,7 @@ data class Itinerario(
     val lugar: String
 )
 
-// Datos de ejemplo para mostrar en la app
+
 val demoPaquetes = listOf(
     PaqueteTuristico(
         id = "p1",
@@ -51,7 +50,7 @@ val demoPaquetes = listOf(
         descripcion = "4 días en San Pedro de Atacama con guías locales, observación astronómica y visita a comunidades atacameñas.",
         precioPorPersona = 320000,
         destino = "San Pedro de Atacama, Chile",
-        imagenUrl = "https://images.unsplash.com/photo-1508261305439-0e0e266c7438?auto=format&fit=crop&w=800&q=60",
+        imagenUrl = "https://th.bing.com/th/id/OIP.O79hbdujledOPlOwL6jfJQHaDs?w=306&h=174&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
         enfoqueSustentable = "Turismo comunitario / astro turismo responsable"
     ),
     PaqueteTuristico(

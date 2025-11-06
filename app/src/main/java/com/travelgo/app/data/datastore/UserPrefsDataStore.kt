@@ -19,7 +19,6 @@ class UserPrefsDataStore(private val context: Context) {
         private val NAME_KEY = stringPreferencesKey("client_name")
     }
 
-    // Guardar token sin bloquear la UI
     suspend fun saveToken(token: String) {
         withContext(Dispatchers.IO) {
             context.dataStore.edit { prefs ->
@@ -28,7 +27,6 @@ class UserPrefsDataStore(private val context: Context) {
         }
     }
 
-    // Guardar nombre sin bloquear la UI
     suspend fun saveName(name: String) {
         withContext(Dispatchers.IO) {
             context.dataStore.edit { prefs ->
