@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.travelgo.app.data.datastore.UserPrefsDataStore
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +30,7 @@ fun HomeScreen(
     navController: NavController,
     prefs: UserPrefsDataStore
 ) {
+    val scope = rememberCoroutineScope()
     var nombre by remember { mutableStateOf("Viajero") }
 
     LaunchedEffect(Unit) {
@@ -41,7 +43,19 @@ fun HomeScreen(
                 title = { Text("TravelGo 🌎", fontWeight = FontWeight.Bold) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
-                )
+                ),
+                actions = {
+                    TextButton(onClick = {
+                        scope.launch {
+                            prefs.clear()
+                            navController.navigate("login") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
+                    }) {
+                        Text("Cerrar sesión", color = MaterialTheme.colorScheme.primary)
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -61,7 +75,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Hola, $nombre Bienvenido al viaje de su vida",
+                text = "Hola, $nombre 👋",
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
@@ -69,7 +83,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(6.dp))
             Text(
-                text = "Explora experiencias con impacto positivo ",
+                text = "Explora experiencias con impacto positivo 🌱",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
@@ -128,7 +142,7 @@ private fun FeatureCard(
     var pressed by remember { mutableStateOf(false) }
     val scale by animateFloatAsState(if (pressed) 0.97f else 1f)
     val bgColor by animateColorAsState(
-        if (pressed) accent.copy(alpha = 0.2f)
+        if (pressed) accent.copy(alpha = 0.15f)
         else MaterialTheme.colorScheme.surface
     )
 
@@ -144,7 +158,7 @@ private fun FeatureCard(
                 }
             ),
         colors = CardDefaults.cardColors(containerColor = bgColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = RoundedCornerShape(20.dp)
     ) {
         Row(

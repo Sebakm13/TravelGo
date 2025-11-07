@@ -21,6 +21,7 @@ import com.travelgo.app.data.datastore.UserPrefsDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun LoginScreen(
     navController: NavController,
@@ -36,6 +37,15 @@ fun LoginScreen(
 
     var loading by remember { mutableStateOf(false) }
     var loginError by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        val token = prefs.getToken()
+        if (!token.isNullOrBlank()) {
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     fun validate(): Boolean {
         var ok = true

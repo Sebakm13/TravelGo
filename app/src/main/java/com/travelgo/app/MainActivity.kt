@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val prefs = remember { UserPrefsDataStore(this) }
             val navController = rememberNavController()
+            TravelGoApp(prefs)
 
             TravelGoTheme {
                 NavHost(
