@@ -1,54 +1,51 @@
 package com.travelgo.app.viewmodel
 
-import android.net.Uri
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.travelgo.app.data.Repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.travelgo.app.data.model.User
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.ktx.firestore
 
-class ProfileViewModel : ViewModel() {
+data class ProfileUiState(
+    val isLoading: Boolean = false,
+    val userName: String = "",
+    val userEmail: String = "",
+    val userImage: String? = null,
+    val error: String? = null
+)
 
-    private val firestore = Firebase.firestore
+class ProfileViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository = UserRepository(application)
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState
 
+    fun loadUser(id: Int = 1) {
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
-    fun updateAvatar(uri: Uri?) {
-        _uiState.update { it.copy(avatarUri = uri) }
-    }
-
-
-    fun loadUser(userId: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            val result = repository.fetchUser(id)
 
-            firestore.collection("users")
-                .document(userId)
-                .get()
-                .addOnSuccessListener { document ->
-                    val user = document.toObject(User::class.java)
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            user = user,
-                            error = null
-                        )
-                    }
+            _uiState.value = result.fold(
+                onSuccess = { user ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        userName = "${user.firstName} ${user.lastName}", // ✅ existe
+                        userEmail = user.email.ifEmpty { "Sin email" },
+                        userImage = user.image,
+                        error = null
+                    )
+                },
+                onFailure = { e ->
+                    _uiState.value.copy(
+                        isLoading = false,
+                        error = e.localizedMessage ?: "Error desconocido"
+                    )
                 }
-                .addOnFailureListener { e ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            error = e.message
-                        )
-                    }
-                }
+            )
         }
     }
 }

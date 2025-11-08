@@ -15,6 +15,7 @@
         android:maxSdkVersion="32" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:label="TravelGo"
         android:allowBackup="true"
         android:supportsRtl="true">
