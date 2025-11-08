@@ -1,44 +1,36 @@
-# TravelGo SPA
+TravelGo
 
-Agencia de viajes digital enfocada en experiencias sustentables y turismo comunitario.
-La app busca:
-- Modernizar la gestión de reservas y pagos.
-- Priorizar paquetes turísticos que apoyen economías locales.
-- Promover movilidad y alojamiento responsable.
-- Mostrar itinerarios y experiencias con impacto positivo.
+Acerca del proyecto lo primero que realizamos con sebastian aird 
 
-## Entidades del dominio
-- Paquete Turístico
-- Cliente
-- Reserva
-- Pago
-- Itinerario
+Es que este proyecto lo implementamos con Android con Kotlin y Jetpack Compose. La idea, era armar algo funcional, pero más que nada para entender bien cómo se conectan las diferentes capas empleando MVVM, y como traer datos de una API con Retrofit. La app la pensamos mas como algo de turismo, aunque sobretodo me sirvió para probar cosas nuevas y mejorar la forma en que organizo mis proyectos.
 
-## Funcionalidad de la app
-- Login simulado (cualquier usuario entra).
-- Pantalla Home con navegación.
-- Listado de Paquetes Turísticos sustentables con imágenes e info.
-- Formulario de Reserva con validaciones y feedback visual.
-- Perfil del Cliente con:
-    - Cambio de foto desde galería (recurso nativo).
-    - Guardar nombre en DataStore (persistente).
-    - Obtener ubicación GPS actual (recurso nativo).
-- Animaciones con AnimatedVisibility.
-- Estados de carga/éxito/error simulados.
+Fuimos probando, rompiendo cosas, arreglandolas, y viendo qué funcionaba mejor.
 
-## Tecnología
-- 100% Jetpack Compose + Material 3.
-- Navegación Compose.
-- DataStore Preferences para persistencia local.
-- Coroutines + estados Compose.
-- Kotlin 1.9.21 compatible con Compose Compiler 1.5.6.
-- compileSdk/targetSdk 35, minSdk 24.
-- Tema oscuro moderno con acentos verdes/turquesa.
-- Cumple con los puntos de la evaluación:
-    - Diseño visual coherente
-    - Formularios validados
-    - Navegación entre vistas
-    - Gestión de estado loading/éxito/error
-    - Persistencia local
-    - Recursos nativos (galería + GPS)
-    - Animaciones con propósito
+En tema de Tecnologías y librerías, Está hecha íntegramente en Kotlin. Tambien Empleé Jetpack Compose para toda la interfaz, ya que asi me resulta más rápido y limpio que usar XML.
+La arquitectura es MVVM, con ViewModel y StateFlow para manejar los estados de la UI.
+Para consumir la API use Retrofit con Gson, y para las imágenes Coil, que anda bien con Compose.
+También metí Material 3 para los botones y algunos componentes visuales nuevos.
+El flujo de datos completo lo gestionamos usando corrutinas, evitando bloqueos y garantizando una app fluida.
+
+Para la Organización del proyecto, Intentamos mantener el proyecto bien ordenado
+
+Y lo organizamos asi:
+
+Primero, tengo una carpeta "data" que contiene todo sobre la API y modelos.
+Luego, está el repositorio, que interactúa con la API y manda datos al ViewModel.
+El ViewModel contiene la lógica, manejo de estados y validaciones.
+Y por ultimo , "ui" es la parte visual y las pantallas creadas en Compose.
+
+Nuestra idea era separar bien la lógica de la interfaz y evitar que colapse la app. Por eso Experimentamos con estructuras hasta que de esta forma nos resultó mas cómoda.
+
+Para ejecutarlo esto es lo que hicimos profesor y Para probarlo, simplemente abres el proyecto en Android Studio. 
+Después de que Gradle sincronice, puedes correrlo en un emulador o en un dispositivo físico.
+Lo probamos con el emulador Pixel y ningun problema.
+Arranca, mostrando la pantalla principal y el login todo perfecto.
+
+En verdad aprendimos un monton.
+Cuando pusimos la manos en el proyecto comprendímos mejor el uso de Retrofit, y cómo lidiar con las respuestas de la API y sin atascar la interfaz de usuario .
+También Realizamos y aprendimos el manejo de estados en Compose, usando ViewModel, y manteniendo una arquitectura más clara.
+Ademas, entendímos lo crucial de separar responsabilidades, antes todo en un archivo, ahora es más claro dividir bien el codigo.
+
+
