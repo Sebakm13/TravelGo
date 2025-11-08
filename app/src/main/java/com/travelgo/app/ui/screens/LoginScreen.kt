@@ -49,11 +49,27 @@ fun LoginScreen(
 
     fun validate(): Boolean {
         var ok = true
+
+        // --- Validación de email ---
         if (email.isBlank()) {
             emailError = "El correo es obligatorio"
             ok = false
-        } else emailError = null
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailError = "Formato de correo inválido"
+            ok = false
+        } else if (!(
+                    email.endsWith("@gmail.com", ignoreCase = true) ||
+                            email.endsWith("@hotmail.com", ignoreCase = true) ||
+                            email.endsWith("@outlook.com", ignoreCase = true) ||
+                            email.endsWith("@yahoo.com", ignoreCase = true)
+                    )) {
+            emailError = "Solo se permiten correos Gmail, Hotmail, Outlook o Yahoo"
+            ok = false
+        } else {
+            emailError = null
+        }
 
+        // --- Validación de contraseña ---
         if (password.isBlank()) {
             passwordError = "La contraseña es obligatoria"
             ok = false
