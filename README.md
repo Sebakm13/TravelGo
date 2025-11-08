@@ -1,38 +1,135 @@
-Sebastian Garrido y Sebastian Aird 
-Desarrollo de Aplicaciones Móviles 
+Nombre del Proyecto: TravelGo
 
-TravelGo
+1. Caso elegido y su alcance
+- el caso escogido fue TravelGo, en donde tenemos que realizar una aplicación móvil donde se gestiónen viajes.
+- alcance del proyecto: el proyecto incluye un diseño/UI, validaciones, una navegación simple, gestioness de estado y persostencia local, ademas de recursos nativos, animaciones y un consumo de Api (incluyendo'/me')
 
-Acerca del proyecto, lo primero que realizamos junto a mi compañero fue implementarlo en Android app, utilizando Kotlin y Jetpack Compose.
-La idea principal era desarrollar una aplicación funcional que nos permitiera comprender mejor cómo se conectan las diferentes capas bajo el modelo arquitectónico MVVM, además de aprender a consumir datos desde una API usando Retrofit.
-Pensamos ponerle a la app un toque mas turístico como el contexto que nos entrego de travel go, aunque principalmente me sirvió como una oportunidad para experimentar, probar nuevas herramientas y mejorar la forma en como organizar el proyecto.
-Fuimos probando, mejorando cosas y arreglandoles los errores para que nos funcione cada vez mejor la app.
+2. Requisitos y ejecución del proyecto
 
-En tema de Tecnologías y librerías, Está hecha íntegramente en Kotlin. Tambien Empleamos Jetpack Compose para toda la interfaz , ya que asi nos resulto más rápido y limpio que usar XML.
-La arquitectura es MVVM, con ViewModel y StateFlow para manejar los estados de la UI.
-Para consumir la API use Retrofit con Gson, y para las imágenes Coil, que anda bien con Compose.
-También metí Material 3 para los botones y algunos componentes visuales nuevos.
-El flujo de datos completo lo gestionamos usando corrutinas, evitando bloqueos y garantizando una app fluida.
+-Stack contiene:
+-el lengiaje Kotlin
+-una UI con Jetpack Compose + material 3
+-una arquitectura MVVM con ViewModel Y StateFlow
+- Librerías: Retrofit, Gson, Coil y Coroutines
 
-Para la Organización del proyecto, Intentamos mantener el proyecto bien ordenado
+-Instalación
+   -Primero clonar el repositorio
+   git clone https://github.com/Sebakm13/TravelGo.git
+   -segundo paso Abrir el proyecto en Android Studio
+   -Tercer paso, esperar la sincronizacion de Gradle
 
-Y lo organizamos asi:
+- Ejecución:
+  -Seleccionar un emulador o dispositivo físico (preferiblemente el Pixel 7 PRO).
+  -Ejecutar con el botón Run ▶️.
+  -La app inicia mostrando la pantalla principal y luego el login, donde habran más opciones      uha222  1para navegar.
 
-Primero, tenemos una carpeta "data" que contiene todo sobre el API y modelos.
-Luego, está el repositorio, que interactúa con la API y manda datos al ViewModel.
-El ViewModel contiene la lógica, manejo de estados y validaciones.
-Y por ultimo , "ui" es mas que nada para la parte visual y las pantallas creadas en el Compose.
+3. Arquitectura y flujo del proyecto
+Sigue la arquitectura MVVM, separando la lógica de negocio de la interfaz de usuario
 
-Nuestra idea era separar bien la lógica de la interfaz y evitar que colapse la app. Por eso empezamos a Experimentar con estructuras y se nos hizo bastante mas facil.
+├──app
+|  ├──manifests
+|  |  ├──AndroidManifest.xml
+|  ├──kotlin+java
+|  |  ├──data
+|  |  |  ├──dao
+|  |  |  |  ├── paquereDao
+|  |  |  |  ├── UserDao.kt
+|  |  |  ├── datastore
+|  |  |  |  ├──UserPredsDataStore.kt
+|  |  |  ├──db
+|  |  |  |  ├──AppDatabase
+|  |  |  |  ├──DatabaseProvider
+|  |  |  |  ├──PaqueteLocal
+|  |  |  ├──local
+|  |  |  |  ├──SessionManager
+|  |  |  ├──model
+|  |  |  |  ├──Entities.kt
+|  |  |  |  ├──User
+|  |  |  ├──remote
+|  |  |  |  ├──dto
+|  |  |  |  |  ├──LoginRequest
+|  |  |  |  |  ├──LoginResponse
+|  |  |  |  |  ├──UserDto
+|  |  |  |  |  ├──UsersResponse
+|  |  |  |  ├──ApiService
+|  |  |  |  ├──AuthInterceptor
+|  |  |  |  ├──RetrofitClient
+|  |  |  ├──Repository
+|  |  |  |  ├──AvatarRepository.kt
+|  |  |  |  ├──PaqueteRepository
+|  |  |  |  ├──UserRepository
+|  |  |  ├──Paquete
+|  |  |  ├──PaqueteRepository
+|  |  ├──ui
+|  |  |  ├──components
+|  |  |  |  ├──ImagePickerDialog.kt
+|  |  |  |  ├──TopBarWithBack
+|  |  |  ├──main
+|  |  |  |  ├──NavGraph.kt
+|  |  |  ├──screens
+|  |  |  |  ├──HomeScreen.kt 
+|  |  |  |  ├──LoginScreen.kt
+|  |  |  |  ├──PaqueteDetailScreen.kt
+|  |  |  |  ├──PaqueteEditScreen.kt
+|  |  |  |  ├──PaqueteListScreen.kt
+|  |  |  |  ├──PaquetesScreen.kt
+|  |  |  |  ├──PerfilScreen.kt
+|  |  |  |  ├──ReservaScreen.kt
+|  |  |  ├──theme
+|  |  |  |  ├──Color.kt
+|  |  |  |  ├──Theme.kt
+|  |  |  |  ├──Type.kt
+|  |  |  ├──PaqueteViewModel
+|  |  ├──utils
+|  |  |  ├──ImafeUtils
+|  |  ├──viewmodel
+|  |  |  ├──ProfileViewModel.kt
+|  |  ├──MainActivity
+|  |  ├──TravelGoApp.kt
+|  ├──res
+├──Gradle Screipts
 
-Para ejecutarlo esto es lo que se hace , simplemente abres el proyecto en Android Studio. 
-Después de que Gradle sincronice, puedes correrlo en un emulador o en un dispositivo físico.
-Lo probamos con el emulador Pixel y ningun problema.
-Arranca, mostrando la pantalla principal y el login.
+-Gestión de estado
+  -StateFlow y MutableStateFlow son usados para emitir estados de carga, exito o error.
+  -los ViewModel centralizan la lógica y exponen estados observables para compose
 
+-Navegación
+  -La implementamos con NavHost y NavController
+  - el flujo principal siendo el login -> Home -> Perfil
 
-En verdad como una conclusion mas personal del grupo sobre el proyecto y hablar un poco de lo que aprendimos fue que Cuando pusimos la manos en el proyecto comprendímos mejor el uso de Retrofit, cómo lidiar con las respuestas de la API y sin atascar la interfaz de usuario . También  lo que hicimos y aprendimos el manejo de estados en Compose, usando ViewModel, y manteniendo una arquitectura más clara. Ademas, entendímos lo crucial de separar responsabilidades, antes todo en un archivo, ahora es más claro dividir bien el codigo.
+4. Funcionalidades
+  - Formulario validado de inicio de sesión y registro.  
+  - Navegación entre pantallas con backstack funcional.  
+  - Gestión de estado mediante ViewModel y StateFlow (carga, éxito, error).  
+  - Persistencia local (almacenamiento de sesión y perfil con `SharedPreferences`).  
+  - Almacenamiento de imagen de perfil utilizando Coil.  
+  - Recursos nativos: acceso a cámara y galería (con permisos y fallback).  
+  - Animaciones con propósito (transiciones entre pantallas).  
+  - Consumo de API externa** con Retrofit, incluyendo el endpoint `/me`.
 
+5. Endpoints
+Base URL: http://10.0.2.2:8080/api/
+| Método | Ruta | Body | Respuesta |
+| ------ | ---- | ----- | ---------- |
+| **POST** | `/auth/signup` | `{ email, password, name }` | 201 → `{ authToken, user: { id, email, name } }` |
+| **POST** | `/auth/login` | `{ email, password }` | 200 → `{ authToken, user: { id, email } }` |
+| **GET** | `/auth/me` | - (requiere `Authorization` header) | 200 → `{ id, email, name, avatarUrl }` |
 
+6. User flows
+Flujo principal de usuario
+  -inicio de sesión: el usuario ingresa correo y contraseña, si llega a ser válido pasa al       home pero si falla, muestra un mensaje de error
 
+  -Home: muestra las opciones paquetes sustentables, reservar experiencias y tu perfil
+  -paquetes sustentables, muestra viajes que se pueden realizar en el momento
+  -reservar experiencias, permite el realizar reservas de los viajes en los paquetes             sustentables para elejir una fecha ideal para tus necesidades
+  -tu perfil, personaliza tu perfil para mostrar tu esencia (y algunos datos relevantes)
+  -cerrar sesión, limpia los datos y te devuelve al login
 
+7. autores
+
+  -Sebastián garrido y sebastián Aird
+  -desarrollo de aplicaciones móviles -EP3 2025
+
+8. reflexion
+
+-durante el tiempo que estubimos trabajando en este trabajo aprendimos no solo a optimizar nuestros tiempos de mejor manera, pero tambien el colaborar en caso de que alguien necesite apoyo en algunas areas, tambien el priorizar lo esencial antes que los pequeños detalles
