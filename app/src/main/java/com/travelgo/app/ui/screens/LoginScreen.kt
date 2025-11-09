@@ -186,23 +186,24 @@ fun LoginScreen(
                         onClick = {
                             if (!validate()) return@Button
                             scope.launch {
-                                try {
-                                    loading = true
-                                    loginError = null
+                                loading = true
+                                loginError = null
 
-                                    delay(1000) // Simula llamada backend
+                                val registeredEmail = prefs.getEmail()
+                                val registeredPassword = prefs.getPassword()
 
+                                delay(500)
+
+                                if (email == registeredEmail && password == registeredPassword) {
                                     prefs.saveToken("TOKEN_LOCAL_SIMULADO")
-                                    val nombre = email.substringBefore("@").ifBlank { "Viajero" }
-                                    prefs.saveName(nombre)
-
+                                    prefs.saveName(email.substringBefore("@"))
                                     loading = false
                                     navController.navigate("home") {
                                         popUpTo("login") { inclusive = true }
                                     }
-                                } catch (e: Exception) {
+                                } else {
                                     loading = false
-                                    loginError = "Error inesperado"
+                                    loginError = "Correo o contraseña incorrectos"
                                 }
                             }
                         },
@@ -233,12 +234,13 @@ fun LoginScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    TextButton(onClick = { /* Navegar a registro si existe */ }) {
+                    TextButton(onClick = { navController.navigate("register") }) {
                         Text(
                             "¿No tienes cuenta? Crear una",
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
+
                 }
             }
         }

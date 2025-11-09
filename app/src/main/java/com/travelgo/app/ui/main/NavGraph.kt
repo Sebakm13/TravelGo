@@ -6,13 +6,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.PaqueteViewModel
-import com.travelgo.app.ui.screens.PaqueteDetailScreen
-import com.travelgo.app.ui.screens.PaqueteEditScreen
-import com.travelgo.app.ui.screens.PaqueteListScreen
+import com.travelgo.app.ui.screens.*
 
 @Composable
-fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController = rememberNavController()) {
+fun TravelNavGraph(
+    viewModel: PaqueteViewModel,
+    prefs: UserPrefsDataStore, // ✅ ← agrégalo aquí
+    navController: NavHostController = rememberNavController()
+) {
     NavHost(navController, startDestination = "list") {
 
         composable("list") {
@@ -23,10 +26,14 @@ fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController
             )
         }
 
+        composable("register") {
+            RegisterScreen(navController = navController, prefs = prefs)
+        }
+
         composable("detail/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")?.toLongOrNull() ?: return@composable
             PaqueteDetailScreen(
-                navController = navController, // ✅ agregado
+                navController = navController,
                 id = id,
                 viewModel = viewModel,
                 onEdit = { navController.navigate("edit/$id") }
@@ -44,7 +51,7 @@ fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController
         ) { backStack ->
             val idArg = backStack.arguments?.getString("id")?.toLongOrNull()
             PaqueteEditScreen(
-                navController = navController, // ✅ agregado
+                navController = navController,
                 editId = idArg,
                 viewModel = viewModel,
                 onDone = { navController.popBackStack() }
@@ -53,7 +60,7 @@ fun TravelNavGraph(viewModel: PaqueteViewModel, navController: NavHostController
 
         composable("edit") {
             PaqueteEditScreen(
-                navController = navController, // ✅ agregado
+                navController = navController,
                 editId = null,
                 viewModel = viewModel,
                 onDone = { navController.popBackStack() }
