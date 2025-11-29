@@ -12,7 +12,6 @@ import com.travelgo.app.ui.screens.LoginScreen
 fun TravelGoApp(prefs: UserPrefsDataStore) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "login") {
-        composable("login") { LoginScreen(navController, prefs) }
         composable("home") { HomeScreen(navController, prefs) }
     }
 }

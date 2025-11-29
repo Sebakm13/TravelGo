@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'jacoco'   // ✅ AÑADIDO
 }
-
 
 android {
     namespace 'com.travelgo.app'
@@ -19,7 +19,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    
     buildTypes {
         release {
             minifyEnabled false
@@ -37,6 +36,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -45,90 +45,121 @@ android {
         compose true
     }
 
-        composeOptions {
-            // Compose Compiler compatible con Kotlin 1.9.21
-            kotlinCompilerExtensionVersion '1.5.6'
-        }
-        packaging {
-            resources {
-                excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            }
-        }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.6'
     }
 
-    dependencies {
-
-            // Retrofit
-            implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-
-            // Converter de JSON a objetos Kotlin
-            implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-
-            // OkHttp (cliente de red)
-            implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-
-            // Logging interceptor
-            implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-
-            // Gson
-            implementation 'com.google.code.gson:gson:2.10.1'
-
-            // Compose + Material3
-            implementation "androidx.room:room-runtime:2.6.1"
-            implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-            implementation("com.google.firebase:firebase-firestore-ktx")
-            implementation("com.google.firebase:firebase-common-ktx")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-            kapt "androidx.room:room-compiler:2.6.1"
-            implementation "androidx.core:core-ktx:1.12.0"
-            implementation "androidx.activity:activity-compose:1.8.0"
-            implementation "androidx.room:room-ktx:2.6.1"
-            implementation("androidx.compose.material:material-icons-extended:1.5.6")
-            implementation "androidx.compose.ui:ui:1.5.6"
-            implementation "androidx.compose.material3:material3:1.2.0"
-            implementation "androidx.compose.ui:ui-tooling-preview:1.5.6"
-            debugImplementation "androidx.compose.ui:ui-tooling:1.5.6"
-            implementation("androidx.compose.material:material-icons-extended:1.5.6")
-
-            // Navegación Compose
-            implementation "androidx.navigation:navigation-compose:2.7.6"
-
-            // Animaciones / state
-            implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
-            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
-
-            // DataStore
-            implementation "androidx.datastore:datastore-preferences:1.0.0"
-
-            // Coil
-            implementation "io.coil-kt:coil-compose:2.6.0"
-
-            // Ubicación
-            implementation "com.google.android.gms:play-services-location:21.0.1"
-
-            // Tests
-            testImplementation "junit:junit:4.13.2"
-            androidTestImplementation "androidx.test.ext:junit:1.1.5"
-            androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-
-            // testing JUnit
-            testImplementation("junit:junit:4.13.2")
-
-            // testing Corutinas
-            testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-
-            // testing Mockk
-            testImplementation("io.mockk:mockk:1.13.8")
-            testImplementation("io.mockk:mockk-android:1.13.8")
-
-            // testing Turbine
-            testImplementation("app.cash.turbine:turbine:1.0.0")
-
-            // testing Core testing
-            testImplementation("androidx.arch.core:core-testing:2.2.0")
-
-            // android Testing (CORREGIDOS)
-            androidTestImplementation("androidx.test.ext:junit:1.1.5")
-            androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.10"   // versión recomendada
+}
+
+// Para que JaCoCo funcione con tests
+tasks.withType(Test) {
+    useJUnitPlatform()
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
+}
+
+// Tarea de reporte JaCoCo
+task jacocoTestReport(type: JacocoReport) {
+
+    dependsOn "testDebugUnitTest"
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    def excludes = [
+            '**/R.class', '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*Test*.*',
+            'android/**/*.*'
+    ]
+
+    def javaTree = fileTree(
+            dir: "$buildDir/intermediates/javac/debug",
+            excludes: excludes
+    )
+
+    def kotlinTree = fileTree(
+            dir: "$buildDir/tmp/kotlin-classes/debug",
+            excludes: excludes
+    )
+
+    sourceDirectories.setFrom(files([
+            "src/main/java",
+            "src/main/kotlin"
+    ]))
+
+    classDirectories.setFrom(files([javaTree, kotlinTree]))
+
+    executionData.setFrom(fileTree(
+            dir: buildDir,
+            includes: [
+                    "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                    "jacoco/testDebugUnitTest.exec"
+            ]
+    ))
+}
+
+dependencies {
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Compose + Material3
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-common-ktx")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+    kapt "androidx.room:room-compiler:2.6.1"
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.activity:activity-compose:1.8.0"
+    implementation "androidx.room:room-ktx:2.6.1"
+    implementation("androidx.compose.material:material-icons-extended:1.5.6")
+    implementation "androidx.compose.ui:ui:1.5.6"
+    implementation "androidx.compose.material3:material3:1.2.0"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.5.6"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.5.6"
+    implementation("androidx.compose.material:material-icons-extended:1.5.6")
+
+    // Navegación
+    implementation "androidx.navigation:navigation-compose:2.7.6"
+
+    // Animaciones / state
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Coil
+    implementation "io.coil-kt:coil-compose:2.6.0"
+
+    // Ubicación
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+
+    // Tests
+    testImplementation "junit:junit:4.13.2"
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("app.cash.turbine:turbine:1.0.0")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+}

@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.travelgo.app.data.datastore.UserPrefsDataStore
-import com.travelgo.app.navigation.Navigation
 import com.travelgo.app.ui.PaqueteViewModel
 import com.travelgo.app.ui.screens.*
 import com.travelgo.app.ui.theme.TravelGoTheme
@@ -24,7 +23,6 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val viewModel: PaqueteViewModel = viewModel()
             val navController = rememberNavController()
-            Navigation(navController, prefs)
 
             TravelGoTheme {
                 NavHost(
