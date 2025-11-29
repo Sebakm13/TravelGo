@@ -1,25 +1,31 @@
 package com.travelgo.app.data.Repository
 
 import android.content.Context
-import com.travelgo.app.data.remote.ApiService
-import com.travelgo.app.data.remote.RetrofitClient
-import com.travelgo.app.data.remote.dto.UserDto
+import com.travelgo.app.data.model.User
+import com.travelgo.app.network.ApiClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.lang.Exception
 
-class UserRepository(context: Context) {
+class UserRepository(private val context: Context) {
 
-    private val apiService: ApiService = RetrofitClient
-        .create(context)
-        .create(ApiService::class.java)
+    private val api = ApiClient.userApi
 
-    suspend fun fetchUser(id: Int = 1): Result<UserDto> {
-        return try {
-            // Llamar a la API
-            val user = apiService.getUser(id)
-
-            // Retornar éxito
+    // fetchUser devuelve Result<User>
+    suspend fun fetchUser(id: Int): Result<User> = withContext(Dispatchers.IO) {
+        try {
+            // ejemplo: llamada a microservicio user-service
+            val dto = api.getUser(id)
+            // Map DTO -> Model (asume que ApiUserDto tiene same fields)
+            val user = User(
+                id = dto.id.toString(),
+                name = dto.name ?: "",
+                email = dto.email ?: "",
+                createdAt = dto.createdAt ?: System.currentTimeMillis(),
+                avatarUrl = dto.avatarUrl
+            )
             Result.success(user)
         } catch (e: Exception) {
-            // Si algo falla (sin internet, timeout, etc.)
             Result.failure(e)
         }
     }
