@@ -1,7 +1,12 @@
 package com.travelgo.usersservice;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
 public class UsersserviceApplication {
+
     public static void main(String[] args) {
-        System.out.println("Microservicio Usersservice iniciado");
+        SpringApplication.run(UsersserviceApplication.class, args);
     }
 }
