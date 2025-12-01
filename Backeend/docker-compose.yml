@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+
+  users-service:
+    build: ./users-service
+    container_name: users-service
+    ports:
+      - "8081:8081"
+    networks:
+      - travel-net
+
+  bookings-service:
+    build: ./bookings-service
+    container_name: bookings-service
+    ports:
+      - "8082:8082"
+    networks:
+      - travel-net
+
+  payments-service:
+    build: ./payments-service
+    container_name: payments-service
+    ports:
+      - "8083:8083"
+    networks:
+      - travel-net
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - users-service
+      - bookings-service
+      - payments-service
+    networks:
+      - travel-net
+
+networks:
+  travel-net:
+    driver: bridge
