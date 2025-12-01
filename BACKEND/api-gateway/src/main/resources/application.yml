@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: users-service
+          uri: http://users-service:8081
+          predicates:
+            - Path=/users/**
+        - id: bookings-service
+          uri: http://bookings-service:8082
+          predicates:
+            - Path=/bookings/**
+        - id: payments-service
+          uri: http://payments-service:8083
+          predicates:
+            - Path=/payments/**
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
