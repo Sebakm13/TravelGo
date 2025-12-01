@@ -1,0 +1,27 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: users-service
+          uri: http://users-service:8081
+          predicates:
+            - Path=/users/**, /user/**
+        - id: bookings-service
+          uri: http://bookings-service:8082
+          predicates:
+            - Path=/bookings/**, /api/trips/**
+        - id: payments-service
+          uri: http://payments-service:8083
+          predicates:
+            - Path=/payments/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
