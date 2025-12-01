@@ -5,5 +5,6 @@ data class Paquete(
     val nombre: String,
     val destino: String,
     val precio: Double,
-    val descripcion: String
+    val descripcion: String,
+    val creadoAt: Long? = null
 )

@@ -20,6 +20,7 @@ fun TravelNavGraph(
 
         composable("list") {
             PaqueteListScreen(
+                navController = navController,
                 viewModel = viewModel,
                 onAdd = { navController.navigate("edit") },
                 onOpen = { id -> navController.navigate("detail/$id") }

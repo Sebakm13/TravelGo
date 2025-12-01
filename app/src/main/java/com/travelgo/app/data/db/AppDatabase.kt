@@ -7,7 +7,7 @@ import com.travelgo.app.data.db.PaqueteLocal
 
 @Database(
     entities = [PaqueteLocal::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
