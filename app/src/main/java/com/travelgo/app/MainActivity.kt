@@ -1,6 +1,5 @@
 package com.travelgo.app
 
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.PaqueteViewModel
+import com.travelgo.app.ui.main.TravelNavGraph
 import com.travelgo.app.ui.screens.*
 import com.travelgo.app.ui.theme.TravelGoTheme
 
@@ -19,9 +19,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val prefs = UserPrefsDataStore(this)
             val context = LocalContext.current
-            val viewModel: PaqueteViewModel = viewModel()
+            val prefs = remember { UserPrefsDataStore(context) }
+            val viewModel: PaqueteViewModel = viewModel(factory = PaqueteViewModel.Factory)
             val navController = rememberNavController()
 
             TravelGoTheme {
@@ -38,8 +38,12 @@ class MainActivity : ComponentActivity() {
                     composable("home") {
                         HomeScreen(navController = navController, prefs = prefs)
                     }
+                    
                     composable("paquetes") {
-                        PaquetesScreen(navController = navController)
+                        TravelNavGraph(
+                            viewModel = viewModel,
+                            prefs = prefs
+                        )
                     }
                     composable("reserva") {
                         ReservaScreen(navController = navController)
