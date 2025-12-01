@@ -8,24 +8,45 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+data class WeatherUiState(
+    val isLoading: Boolean = false,
+    val data: WeatherResponse? = null,
+    val errorMessage: String? = null
+)
+
 class WeatherViewModel(
     private val repository: WeatherRepository = WeatherRepository()
 ) : ViewModel() {
 
-    private val _weatherState = MutableStateFlow<WeatherResponse?>(null)
-    val weatherState: StateFlow<WeatherResponse?> = _weatherState
+    private val _state = MutableStateFlow(WeatherUiState())
+    val state: StateFlow<WeatherUiState> = _state
 
-    private val apiKey = "7a79854e91728678ddbeefb6c7977969"
+
+    private val apiKey = "3d852714f8f87fa386c3e6ceb393ee2a"
 
     fun loadWeather(city: String) {
+        _state.value = _state.value.copy(
+            isLoading = true,
+            errorMessage = null
+        )
+
         viewModelScope.launch {
             try {
                 val response = repository.getWeather(city, apiKey)
-                _weatherState.value = response
+                _state.value = WeatherUiState(
+                    isLoading = false,
+                    data = response,
+                    errorMessage = null
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
-                _weatherState.value = null
+                _state.value = WeatherUiState(
+                    isLoading = false,
+                    data = null,
+                    errorMessage = "Error al obtener el clima. Revisa tu conexión."
+                )
             }
         }
     }
 }
+
