@@ -32,9 +32,7 @@ import com.travelgo.app.ui.components.TopBarWithBack
 @Composable
 fun PaquetesScreen(navController: NavController) {
 
-    // ------------------------------
-    // 🔍 BUSCADOR + FILTROS
-    // ------------------------------
+    
     var searchQuery by remember { mutableStateOf("") }
     var selectedDestino by remember { mutableStateOf("Todos") }
     var selectedPrecio by remember { mutableStateOf("Todos") }
@@ -50,9 +48,7 @@ fun PaquetesScreen(navController: NavController) {
         "Más de $400.000"
     )
 
-    // ------------------------------
-    // 🔎 FILTRAR LISTA
-    // ------------------------------
+  
     val filteredPaquetes = demoPaquetes.filter { paquete ->
 
         val matchesName = paquete.titulo.contains(searchQuery, ignoreCase = true)
@@ -111,9 +107,8 @@ fun PaquetesScreen(navController: NavController) {
 
             Spacer(Modifier.height(16.dp))
 
-            // ------------------------------
-            // 🔍 BUSCADOR
-            // ------------------------------
+           
+            
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -125,9 +120,8 @@ fun PaquetesScreen(navController: NavController) {
 
             Spacer(Modifier.height(12.dp))
 
-            // ------------------------------
-            // 🎯 FILTROS
-            // ------------------------------
+            
+            
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
                 // Destino
@@ -181,9 +175,8 @@ fun PaquetesScreen(navController: NavController) {
 
             Spacer(Modifier.height(24.dp))
 
-            // ------------------------------
-            // 📋 LISTA FILTRADA
-            // ------------------------------
+           
+            
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(bottom = 90.dp)
