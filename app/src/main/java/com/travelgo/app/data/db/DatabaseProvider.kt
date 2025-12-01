@@ -4,18 +4,20 @@ import android.content.Context
 import androidx.room.Room
 
 object DatabaseProvider {
-    private var db: AppDatabase? = null
+
+    @Volatile
+    private var INSTANCE: AppDatabase? = null
 
     fun getDatabase(context: Context): AppDatabase {
-        if (db == null) {
-            db = Room.databaseBuilder(
+        return INSTANCE ?: synchronized(this) {
+            INSTANCE ?: Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "travelgo.db"
             )
-                .fallbackToDestructiveMigration() // Importante para que no explote
+                .fallbackToDestructiveMigration()
                 .build()
+                .also { INSTANCE = it }
         }
-        return db!!
     }
 }
