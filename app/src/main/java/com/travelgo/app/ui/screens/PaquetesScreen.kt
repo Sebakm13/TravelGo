@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +32,43 @@ import com.travelgo.app.ui.components.TopBarWithBack
 @Composable
 fun PaquetesScreen(navController: NavController) {
 
+    // ------------------------------
+    // 🔍 BUSCADOR + FILTROS
+    // ------------------------------
+    var searchQuery by remember { mutableStateOf("") }
+    var selectedDestino by remember { mutableStateOf("Todos") }
+    var selectedPrecio by remember { mutableStateOf("Todos") }
+    var destinoMenuExpanded by remember { mutableStateOf(false) }
+    var precioMenuExpanded by remember { mutableStateOf(false) }
+
+    val destinos = listOf("Todos") + demoPaquetes.map { it.destino }.distinct()
+
+    val precioOptions = listOf(
+        "Todos",
+        "Hasta $300.000",
+        "$300.000 - $400.000",
+        "Más de $400.000"
+    )
+
+    // ------------------------------
+    // 🔎 FILTRAR LISTA
+    // ------------------------------
+    val filteredPaquetes = demoPaquetes.filter { paquete ->
+
+        val matchesName = paquete.titulo.contains(searchQuery, ignoreCase = true)
+
+        val matchesDestino = selectedDestino == "Todos" || paquete.destino == selectedDestino
+
+        val matchesPrecio = when (selectedPrecio) {
+            "Hasta $300.000" -> paquete.precioPorPersona <= 300_000
+            "$300.000 - $400.000" -> paquete.precioPorPersona in 300_000..400_000
+            "Más de $400.000" -> paquete.precioPorPersona > 400_000
+            else -> true
+        }
+
+        matchesName && matchesDestino && matchesPrecio
+    }
+
     Scaffold(
         topBar = { TopBarWithBack(navController, title = "Paquetes sustentables") },
         floatingActionButton = {
@@ -47,51 +85,111 @@ fun PaquetesScreen(navController: NavController) {
         }
     ) { innerPadding ->
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
-                            MaterialTheme.colorScheme.surface
-                        )
-                    )
-                )
                 .padding(innerPadding)
+                .padding(horizontal = 20.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp)
-            ) {
 
-                Text(
-                    text = "Explora viajes responsables 🌿",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            Text(
+                text = "Explora viajes responsables 🌿",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
+            )
 
-                Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(6.dp))
 
-                Text(
-                    text = "Experiencias únicas que cuidan el planeta y a las comunidades locales.",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
-                    )
+            Text(
+                text = "Filtra por destino, precio o nombre del paquete.",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
+            )
 
-                Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    contentPadding = PaddingValues(bottom = 90.dp)
-                ) {
-                    items(demoPaquetes) { paquete ->
-                        PaqueteCard(paquete)
+            // ------------------------------
+            // 🔍 BUSCADOR
+            // ------------------------------
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Buscar por nombre") },
+                singleLine = true,
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            // ------------------------------
+            // 🎯 FILTROS
+            // ------------------------------
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+
+                // Destino
+                Box(modifier = Modifier.weight(1f)) {
+                    OutlinedButton(
+                        onClick = { destinoMenuExpanded = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Destino: $selectedDestino")
                     }
+                    DropdownMenu(
+                        expanded = destinoMenuExpanded,
+                        onDismissRequest = { destinoMenuExpanded = false }
+                    ) {
+                        destinos.forEach { destino ->
+                            DropdownMenuItem(
+                                text = { Text(destino) },
+                                onClick = {
+                                    selectedDestino = destino
+                                    destinoMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Precio
+                Box(modifier = Modifier.weight(1f)) {
+                    OutlinedButton(
+                        onClick = { precioMenuExpanded = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Precio: $selectedPrecio")
+                    }
+                    DropdownMenu(
+                        expanded = precioMenuExpanded,
+                        onDismissRequest = { precioMenuExpanded = false }
+                    ) {
+                        precioOptions.forEach { precio ->
+                            DropdownMenuItem(
+                                text = { Text(precio) },
+                                onClick = {
+                                    selectedPrecio = precio
+                                    precioMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+
+            // ------------------------------
+            // 📋 LISTA FILTRADA
+            // ------------------------------
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(bottom = 90.dp)
+            ) {
+                items(filteredPaquetes) { paquete ->
+                    PaqueteCard(paquete)
                 }
             }
         }
@@ -115,14 +213,12 @@ private fun PaqueteCard(paquete: PaqueteTuristico) {
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            ) {
-                pressed = true
-
-            }
+            ) { pressed = true }
             .padding(0.dp),
         colors = CardDefaults.cardColors(containerColor = cardColor),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
+
         Column(modifier = Modifier.padding(16.dp)) {
 
             AsyncImage(
