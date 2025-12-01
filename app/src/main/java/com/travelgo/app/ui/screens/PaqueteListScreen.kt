@@ -13,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.travelgo.app.ui.PaqueteViewModel
 import com.travelgo.app.ui.components.TopBarWithBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaqueteListScreen(
+    navController: NavController,
     viewModel: PaqueteViewModel,
     onAdd: () -> Unit,
     onOpen: (Long) -> Unit
@@ -27,6 +29,8 @@ fun PaqueteListScreen(
     var maxPriceText by remember { mutableStateOf("") }
 
     val paquetes = viewModel.paquetes
+    val isLoading = viewModel.isLoading
+    val errorMessage = viewModel.errorMessage
 
     val filtered = paquetes.filter { paquete ->
         val matchesName = paquete.nombre.contains(searchText, ignoreCase = true) ||
@@ -41,8 +45,9 @@ fun PaqueteListScreen(
     Scaffold(
         topBar = {
             TopBarWithBack(
-                navController = null, // si usas nav interno, pásalo desde arriba
-                title = "Paquetes"
+                navController = navController,
+                title = "Paquetes",
+                showBack = false
             )
         },
         floatingActionButton = {
@@ -80,44 +85,77 @@ fun PaqueteListScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (filtered.isEmpty()) {
-                // Estado EMPTY
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No hay paquetes que coincidan con la búsqueda.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
+            when {
+                isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(filtered) { paquete ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onOpen(paquete.id) },
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = paquete.nombre,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = paquete.destino,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "Precio: $${paquete.precio}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
+
+                errorMessage != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = errorMessage ?: "Error desconocido",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(onClick = { viewModel.refresh() }) {
+                                Text("Reintentar")
+                            }
+                        }
+                    }
+                }
+
+                filtered.isEmpty() -> {
+                    // Estado EMPTY
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No hay paquetes que coincidan con la búsqueda.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                else -> {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filtered) { paquete ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onOpen(paquete.id) },
+                                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(16.dp)) {
+                                    Text(
+                                        text = paquete.nombre,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = paquete.destino,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "Precio: $${paquete.precio}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
                             }
                         }
                     }

@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 data class PaqueteLocal(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nombre: String,
+    val destino: String = "",
     val descripcion: String,
-    val precio: Int,
+    val precio: Double,
     val imagenUri: String? = null,
     val creadoAt: Long = System.currentTimeMillis()
 )
