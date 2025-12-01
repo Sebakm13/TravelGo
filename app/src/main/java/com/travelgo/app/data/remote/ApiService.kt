@@ -5,10 +5,6 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // =========================
-    // AUTENTICACIÓN EXISTENTE
-    // =========================
-
     @POST("user/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
