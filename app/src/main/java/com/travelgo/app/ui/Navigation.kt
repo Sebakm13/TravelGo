@@ -1,4 +1,4 @@
-package com.travelgo.app.navigation
+package com.travelgo.app.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController

@@ -10,9 +10,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-private val Context.avatarDataStore: DataStore<Preferences> by preferencesDataStore(
-    name = "avatar_preferences"
-)
+private val Context.avatarDataStore: DataStore<Preferences> by preferencesDataStore(name = "avatar_preferences")
+
 
 class AvatarRepository(private val context: Context) {
 

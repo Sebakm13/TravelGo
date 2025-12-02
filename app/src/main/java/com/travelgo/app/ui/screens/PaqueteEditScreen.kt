@@ -1,87 +1,110 @@
 package com.travelgo.app.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.platform.LocalContext
-import com.travelgo.app.data.Paquete
-import com.travelgo.app.data.db.DatabaseProvider
-import com.travelgo.app.data.PaqueteRepository
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.travelgo.app.ui.PaqueteViewModel
-import com.travelgo.app.ui.PaqueteViewModelFactory
+import com.travelgo.app.ui.components.TopBarWithBack
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaqueteEditScreen(
-    paqueteId: Int,
-    onBack: () -> Unit
+    navController: NavController,
+    editId: Long?,
+    viewModel: PaqueteViewModel,
+    onDone: () -> Unit
 ) {
-    val context = LocalContext.current
-    val db = DatabaseProvider.getDatabase(context)
-    val repo = PaqueteRepository(db.PaqueteDao())
+    val editItem = editId?.let { viewModel.getById(it) }
 
-    val viewModel: PaqueteViewModel = viewModel(
-        factory = PaqueteViewModelFactory(repo)
-    )
-
-    var titulo by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var precio by remember { mutableStateOf("") }
-
-    LaunchedEffect(paqueteId) {
-        if (paqueteId != 0) {
-            val paquete = viewModel.obtenerPorId(paqueteId)
-            paquete?.let {
-                titulo = it.titulo
-                descripcion = it.descripcion
-                precio = it.precio.toString()
-            }
-        }
-    }
+    var nombre by remember { mutableStateOf(editItem?.nombre ?: "") }
+    var destino by remember { mutableStateOf(editItem?.destino ?: "") }
+    var precio by remember { mutableStateOf(editItem?.precio?.toString() ?: "") }
+    var descripcion by remember { mutableStateOf(editItem?.descripcion ?: "") }
 
     Scaffold(
-        topBar = { Text("Editar Paquete", modifier = Modifier.padding(16.dp)) }
-    ) { padding ->
-
-        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-
-            OutlinedTextField(
-                value = titulo,
-                onValueChange = { titulo = it },
-                label = { Text("Título") }
+        topBar = { TopBarWithBack(navController, title = if (editId == null) "Nuevo Paquete" else "Editar Paquete") },
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(24.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = if (editId == null) "Crea un nuevo paquete" else "Actualiza los detalles",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(Modifier.height(8.dp))
-
             OutlinedTextField(
-                value = descripcion,
-                onValueChange = { descripcion = it },
-                label = { Text("Descripción") }
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre del paquete") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
 
-            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = destino,
+                onValueChange = { destino = it },
+                label = { Text("Destino") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
 
             OutlinedTextField(
                 value = precio,
                 onValueChange = { precio = it },
-                label = { Text("Precio") }
+                label = { Text("Precio (USD)") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
 
-            Spacer(Modifier.height(16.dp))
+            OutlinedTextField(
+                value = descripcion,
+                onValueChange = { descripcion = it },
+                label = { Text("Descripción") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                shape = RoundedCornerShape(12.dp),
+                maxLines = 4
+            )
 
-            Button(onClick = {
-                val p = Paquete(
-                    id = paqueteId,
-                    titulo = titulo,
-                    descripcion = descripcion,
-                    precio = precio.toIntOrNull() ?: 0
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    if (editId == null)
+                        viewModel.add(nombre, destino, precio.toDoubleOrNull() ?: 0.0, descripcion)
+                    else
+                        viewModel.update(editId, nombre, destino, precio.toDoubleOrNull() ?: 0.0, descripcion)
+
+                    onDone()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+            ) {
+                Text(
+                    text = if (editId == null) "Guardar" else "Actualizar",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                viewModel.insertar(p)
-                onBack()
-            }) {
-                Text("Guardar")
             }
         }
     }

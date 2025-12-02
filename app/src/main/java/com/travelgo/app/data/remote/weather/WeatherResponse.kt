@@ -1,18 +1,17 @@
 package com.travelgo.app.data.remote.weather
 
-
 data class WeatherResponse(
     val name: String,
-    val main: MainInfo,
-    val weather: List<WeatherInfo>
+    val main: WeatherMain,
+    val weather: List<WeatherDescription>
 )
 
-data class MainInfo(
+data class WeatherMain(
     val temp: Double,
     val humidity: Int
 )
 
-data class WeatherInfo(
+data class WeatherDescription(
     val description: String,
     val icon: String
 )

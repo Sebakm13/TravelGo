@@ -1,29 +1,26 @@
 package com.travelgo.app.data.Repository
 
-import android.content.Context
 import com.travelgo.app.data.model.User
-import com.travelgo.app.network.ApiClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 
-class UserRepository(private val context: Context) {
+class UserRepository(
+    private val api: UserApi
+) : IUserRepository {
 
-    private val api = ApiClient.userApi
-
-    suspend fun fetchUser(id: Int): Result<User> = withContext(Dispatchers.IO) {
-        try {
-            val dto = api.getUser(id)
-            val user = User(
-                id = dto.id.toString(),
-                name = dto.name ?: "",
-                email = dto.email ?: "",
-                createdAt = dto.createdAt ?: System.currentTimeMillis(),
-                avatarUrl = dto.avatarUrl
-            )
+    override suspend fun getUserById(id: Int): Result<User> {
+        return try {
+            val user = api.getUserById(id)
             Result.success(user)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
+}
+
+interface IUserRepository {
+    suspend fun getUserById(id: Int): Result<User>
+}
+
+
+interface UserApi {
+    suspend fun getUserById(id: Int): User
 }

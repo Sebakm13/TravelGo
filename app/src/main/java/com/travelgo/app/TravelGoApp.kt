@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.screens.HomeScreen
-import com.travelgo.app.ui.screens.LoginScreen
 
 @Composable
 fun TravelGoApp(prefs: UserPrefsDataStore) {

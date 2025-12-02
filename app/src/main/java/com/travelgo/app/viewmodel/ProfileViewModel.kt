@@ -3,8 +3,7 @@ package com.travelgo.app.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.travelgo.app.data.Repository.UserRepository
-import com.travelgo.app.data.model.User
+import com.travelgo.app.data.Repository.IUserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -19,11 +18,11 @@ data class ProfileUiState(
 
 class ProfileViewModel(
     application: Application,
-    private val repositoryOverride: UserRepository? = null
+    private val repositoryOverride: IUserRepository? = null  // Usamos la interface IUserRepository
 ) : AndroidViewModel(application) {
 
-    private val repository: UserRepository =
-        repositoryOverride ?: UserRepository(application)
+    private val repository: IUserRepository =
+        repositoryOverride ?: throw IllegalStateException("Repository required for tests")
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState
@@ -32,8 +31,7 @@ class ProfileViewModel(
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
-            val result = repository.fetchUser(id)
-
+            val result = repository.getUserById(id)  // Cambié fetchUser por getUserById
             _uiState.value = result.fold(
                 onSuccess = { user ->
                     _uiState.value.copy(

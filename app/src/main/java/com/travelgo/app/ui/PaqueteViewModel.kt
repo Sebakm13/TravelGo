@@ -1,44 +1,33 @@
 package com.travelgo.app.ui
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.ViewModelProvider
 import com.travelgo.app.data.Paquete
 import com.travelgo.app.data.PaqueteRepository
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import com.travelgo.app.data.datastore.UserPrefsDataStore
 
-class PaqueteViewModel(
-    private val repository: PaqueteRepository
-) : ViewModel() {
+class PaqueteViewModel(private val prefs: UserPrefsDataStore) : ViewModel() {
 
-    val paquetes: StateFlow<List<Paquete>> =
-        repository.paquetes.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            emptyList()
-        )
+    private val repo = PaqueteRepository()
+    var paquetes = mutableStateListOf<Paquete>()
+        private set
 
-    fun insertar(paquete: Paquete) {
-        viewModelScope.launch {
-            repository.insertar(paquete)
-        }
+    init {
+        paquetes.addAll(repo.getAll())
     }
 
-    fun actualizar(paquete: Paquete) {
-        viewModelScope.launch {
-            repository.actualizar(paquete)
-        }
+    fun getById(id: Long) = paquetes.find { it.id == id }
+
+    fun add(nombre: String, destino: String, precio: Double, descripcion: String) {
+        repo.insert(Paquete(0, nombre, destino, precio, descripcion))
+        paquetes.clear()
+        paquetes.addAll(repo.getAll())
     }
 
-    fun eliminar(paquete: Paquete) {
-        viewModelScope.launch {
-            repository.eliminar(paquete)
-        }
-    }
-
-    suspend fun obtenerPorId(id: Int): Paquete? {
-        return repository.obtenerPorId(id)
+    fun update(id: Long, nombre: String, destino: String, precio: Double, descripcion: String) {
+        repo.update(Paquete(id, nombre, destino, precio, descripcion))
+        paquetes.clear()
+        paquetes.addAll(repo.getAll())
     }
 }

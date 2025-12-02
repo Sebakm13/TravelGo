@@ -1,29 +1,24 @@
 package com.travelgo.app.data
 
-import com.travelgo.app.data.dao.PaqueteDao
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+class PaqueteRepository {
 
-class PaqueteRepository(
-    private val paqueteDao: PaqueteDao
-) {
+    // datos de prueba
+    private val lista = mutableListOf(
+        Paquete(1, "Paquete Playa", "Cancún", 1200.0, "Hotel + Tour + Traslados"),
+        Paquete(2, "Paquete Montaña", "Bariloche", 900.0, "Cabaña + Excursiones")
+    )
 
-    val paquetes: Flow<List<Paquete>> =
-        paqueteDao.getAll().map { list -> list.map { it.toDomain() } }
+    fun getAll(): List<Paquete> = lista
 
-    suspend fun insertar(paquete: Paquete) {
-        paqueteDao.insert(paquete.toLocal())
+    fun getById(id: Long) = lista.find { it.id == id }
+
+    fun insert(paquete: Paquete) {
+        val newId = (lista.maxOfOrNull { it.id } ?: 0) + 1
+        lista.add(paquete.copy(id = newId))
     }
 
-    suspend fun actualizar(paquete: Paquete) {
-        paqueteDao.update(paquete.toLocal())
-    }
-
-    suspend fun eliminar(paquete: Paquete) {
-        paqueteDao.delete(paquete.toLocal())
-    }
-
-    suspend fun obtenerPorId(id: Int): Paquete? {
-        return paqueteDao.getById(id)?.toDomain()
+    fun update(paquete: Paquete) {
+        val index = lista.indexOfFirst { it.id == paquete.id }
+        if (index != -1) lista[index] = paquete
     }
 }

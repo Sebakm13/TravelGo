@@ -1,72 +1,77 @@
 package com.travelgo.app.viewmodel
 
 import android.app.Application
-import com.travelgo.app.data.Repository.UserRepository
+import com.travelgo.app.data.Repository.IUserRepository
 import com.travelgo.app.data.model.User
-import io.mockk.coEvery
-import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
-import org.junit.After
-import org.junit.Assert.*
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import junit.framework.TestCase.assertEquals
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.whenever
+import kotlin.Result.Companion.failure
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
 class ProfileViewModelTest {
 
-    private lateinit var viewModel: ProfileViewModel
-    private val repository = mockk<UserRepository>()
-    private val application = mockk<Application>(relaxed = true)
+    @get:Rule
+    val dispatcherRule = MainDispatcherRule()
 
-    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var viewModel: ProfileViewModel
+
+    private val application: Application = mock<Application>()
+    private val userRepository: IUserRepository = mock()
+
+
+    // Ajustado a tu modelo real
+    private val fakeUser = User(
+        id = "1",
+        name = "Juan Perez",
+        email = "juan@test.com",
+        avatarUrl = null
+    )
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-        viewModel = ProfileViewModel(application, repository)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
+        viewModel = ProfileViewModel(application, userRepository)
     }
 
     @Test
-    fun loadUserSuccess() = runTest {
-        val fakeUser = User(
-            id = "1",
-            name = "Ana Torres",
-            email = "ana@example.com",
-            avatarUrl = "image.png"
+    fun `cuando loadUser es llamado, el estado cambia con datos del usuario`() = runTest {
+        whenever(userRepository.getUserById(1)).thenReturn(Result.success(fakeUser))
+
+        viewModel.loadUser()
+        advanceUntilIdle()
+
+        val expectedState = ProfileUiState(
+            isLoading = false,
+            userName = "Juan Perez",
+            userEmail = "juan@test.com",
+            userImage = null,
+            error = null
         )
 
-        coEvery { repository.fetchUser(1) } returns Result.success(fakeUser)
-
-        viewModel.loadUser(1)
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-
-        assertFalse(state.isLoading)
-        assertEquals("Ana Torres", state.userName)
-        assertEquals("ana@example.com", state.userEmail)
-        assertEquals("image.png", state.userImage)
-        assertNull(state.error)
+        assertEquals(expectedState, viewModel.uiState.value)
     }
 
     @Test
-    fun loadUserError() = runTest {
+    fun `cuando fetchUser devuelve failure, uiState muestra error`() = runTest {
+        whenever(userRepository.getUserById(1)).thenReturn(failure(Exception("fail")))
 
-        coEvery { repository.fetchUser(1) } returns Result.failure(Exception("Error de red"))
-
-        viewModel.loadUser(1)
+        viewModel.loadUser()
         advanceUntilIdle()
 
-        val state = viewModel.uiState.value
+        val expectedState = ProfileUiState(
+            isLoading = false,
+            userName = "",
+            userEmail = "",
+            userImage = null,
+            error = "fail"
+        )
 
-        assertFalse(state.isLoading)
-        assertEquals("Error de red", state.error)
+        assertEquals(expectedState, viewModel.uiState.value)
     }
 }

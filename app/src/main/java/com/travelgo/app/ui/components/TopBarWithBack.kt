@@ -1,27 +1,34 @@
 package com.travelgo.app.ui.components
 
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarWithBack(
-    title: String,
-    onBack: () -> Unit,
-    icon: ImageVector = Icons.Default.ArrowBack
-) {
-    SmallTopAppBar(
-        title = { Text(title) },
+fun TopBarWithBack(navController: NavController, title: String) {
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        },
         navigationIcon = {
-            IconButton(onClick = onBack) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    imageVector = icon,
-                    contentDescription = "Volver"
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Volver",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }

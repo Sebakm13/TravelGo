@@ -1,40 +1,27 @@
 package com.travelgo.app.network
 
-import com.travelgo.app.data.remote.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
 object ApiClient {
-
-    private const val BASE_URL = "http://10.0.2.2:8082/"
-
+    // base URL para tus microservicios durante dev
+    private const val BASE_URL = "http://10.0.2.2:8082/" // emulator -> host machine
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val userApi: UserApi = retrofit.create(UserApi::class.java)
+    var userApi: ApiCliente = retrofit.create(ApiCliente::class.java)
     val tripsApi: TripsApi = retrofit.create(TripsApi::class.java)
-    val authApi: AuthApi = retrofit.create(AuthApi::class.java)
 
-    private const val DESTINOS_URL = "http://10.0.2.2:8081/"
-
-    private val destinosRetrofit = Retrofit.Builder()
-        .baseUrl(DESTINOS_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val destinationsApi: ApiService = destinosRetrofit.create(ApiService::class.java)
-
-
+    // Example for external APIs (OpenWeather)
     val weatherApi: WeatherApi = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(WeatherApi::class.java)
 }
-
 
 data class ApiUserDto(
     val id: Int,
@@ -44,7 +31,7 @@ data class ApiUserDto(
     val avatarUrl: String?
 )
 
-interface UserApi {
+interface ApiCliente {
     @GET("api/users/{id}")
     suspend fun getUser(@Path("id") id: Int): ApiUserDto
 }
@@ -67,15 +54,10 @@ interface TripsApi {
     suspend fun createTrip(@Body trip: TripDto): TripDto
 }
 
-data class WeatherResponse(
-    val weather: List<Map<String, Any>>,
-    val main: Map<String, Any>
-)
+// OpenWeather example
+data class WeatherResponse(val weather: List<Map<String,Any>>, val main: Map<String,Any>)
 
 interface WeatherApi {
     @GET("data/2.5/weather")
-    suspend fun getWeather(
-        @Query("q") city: String,
-        @Query("appid") key: String
-    ): WeatherResponse
+    suspend fun getWeather(@Query("q") city: String, @Query("appid") key: String): WeatherResponse
 }

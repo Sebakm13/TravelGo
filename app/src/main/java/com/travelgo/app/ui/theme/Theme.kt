@@ -7,7 +7,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// 🌞 Paleta clara (texto negro)
 private val LightColorScheme = lightColorScheme(
     primary = VerdePrimario,
     secondary = VerdeSecundario,
@@ -19,7 +18,6 @@ private val LightColorScheme = lightColorScheme(
     onSurface = TextoPrincipal
 )
 
-// 🌙 Paleta oscura (texto claro)
 private val DarkColorScheme = darkColorScheme(
     primary = VerdeSecundario,
     secondary = VerdePrimario,

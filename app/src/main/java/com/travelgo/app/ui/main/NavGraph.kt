@@ -4,51 +4,66 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.travelgo.app.data.datastore.UserPrefsDataStore
-import com.travelgo.app.ui.screens.PaqueteListScreen
-import com.travelgo.app.ui.screens.PaqueteDetailScreen
-import com.travelgo.app.ui.screens.PaqueteEditScreen
+import com.travelgo.app.ui.PaqueteViewModel
+import com.travelgo.app.ui.screens.*
 
 @Composable
-fun NavGraph(
-    navController: NavHostController,
-    prefs: UserPrefsDataStore
+fun TravelNavGraph(
+    viewModel: PaqueteViewModel,
+    prefs: UserPrefsDataStore, // ✅ ← agrégalo aquí
+    navController: NavHostController = rememberNavController()
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = "paquetes"
-    ) {
+    NavHost(navController, startDestination = "list") {
 
-        // 📌 LISTA DE PAQUETES
-        composable("paquetes") {
+        composable("list") {
             PaqueteListScreen(
-                onPaqueteClick = { id ->
-                    navController.navigate("detalle/$id")
-                },
-                onAddClick = {
-                    navController.navigate("editar/0")
+                viewModel = viewModel,
+                onAdd = { navController.navigate("edit") },
+                onOpen = { id -> navController.navigate("detail/$id") }
+            )
+        }
+
+        composable("register") {
+            RegisterScreen(navController = navController, prefs = prefs)
+        }
+
+        composable("detail/{id}") { backStack ->
+            val id = backStack.arguments?.getString("id")?.toLongOrNull() ?: return@composable
+            PaqueteDetailScreen(
+                navController = navController,
+                id = id,
+                viewModel = viewModel,
+                onEdit = { navController.navigate("edit/$id") }
+            )
+        }
+
+        composable(
+            route = "edit/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    nullable = true
+                    defaultValue = null
                 }
             )
-        }
-
-        // 📌 DETALLE DE PAQUETE
-        composable("detalle/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-
-            PaqueteDetailScreen(
-                paqueteId = id,
-                onBack = { navController.popBackStack() },
-                onEdit = { navController.navigate("editar/$id") }
+        ) { backStack ->
+            val idArg = backStack.arguments?.getString("id")?.toLongOrNull()
+            PaqueteEditScreen(
+                navController = navController,
+                editId = idArg,
+                viewModel = viewModel,
+                onDone = { navController.popBackStack() }
             )
         }
 
-        // 📌 EDITAR / CREAR PAQUETE
-        composable("editar/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-
+        composable("edit") {
             PaqueteEditScreen(
-                paqueteId = id,
-                onBack = { navController.popBackStack() }
+                navController = navController,
+                editId = null,
+                viewModel = viewModel,
+                onDone = { navController.popBackStack() }
             )
         }
     }

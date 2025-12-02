@@ -2,16 +2,15 @@ package com.travelgo.app.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.travelgo.app.data.PaqueteRepository
+import androidx.lifecycle.viewmodel.CreationExtras
+import com.travelgo.app.data.datastore.UserPrefsDataStore
 
-class PaqueteViewModelFactory(
-    private val repository: PaqueteRepository
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(PaqueteViewModel::class.java)) {
-            return PaqueteViewModel(repository) as T
+class PaqueteViewModelFactory(private val prefs: UserPrefsDataStore) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        return if (modelClass.isAssignableFrom(PaqueteViewModel::class.java)) {
+            PaqueteViewModel(prefs) as T
+        } else {
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
