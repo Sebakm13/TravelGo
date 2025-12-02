@@ -1,24 +1,16 @@
 package com.travelgo.app.ui.screens
 
-import com.travelgo.app.R
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.Context
-import android.location.Location
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,41 +18,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.android.gms.location.LocationServices
+import com.travelgo.app.R
 import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.components.TopBarWithBack
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import com.travelgo.app.utils.fetchLocationString
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerfilScreen(
     navController: NavController,
     prefs: UserPrefsDataStore
 ) {
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    var nombre by remember { mutableStateOf("Viajero") }
+    var nombre by rememberSaveable { mutableStateOf("Viajero") }
+    var editandoNombre by remember { mutableStateOf(false) }
     var localImageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 
-    // cargar datos al iniciar
+    // Cargar datos guardados
     LaunchedEffect(Unit) {
         nombre = prefs.getName() ?: "Viajero"
-        prefs.getPhoto()?.let {
-            localImageUri = Uri.parse(it)
-        }
+        prefs.getPhoto()?.let { localImageUri = Uri.parse(it) }
     }
 
+    // Selector de imagen
     val pickImageLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -71,62 +60,130 @@ fun PerfilScreen(
     }
 
     Scaffold(
-        topBar = { TopBarWithBack(navController, title = "Mi Perfil") }
-    ) { innerPadding ->
+        topBar = {
+            TopBarWithBack(
+                title = "Mi Perfil",
+                onBack = { navController.popBackStack() }
+            )
+        }
+    ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
+                .padding(padding)
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🧍 Imagen de perfil
+
+            Spacer(Modifier.height(20.dp))
+
+            // FOTO CON BORDE DEGRADADO
             Box(
                 modifier = Modifier
-                    .size(130.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    .size(150.dp)
+                    .background(
+                        brush = Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.secondary
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+                    .padding(5.dp)
+                    .clip(CircleShape),
+
                 contentAlignment = Alignment.BottomEnd
             ) {
+
                 AsyncImage(
                     model = localImageUri
-                        ?: ImageRequest.Builder(LocalContext.current)
-                            .data(R.drawable.img) // 👈 imagen por defecto
+                        ?: ImageRequest.Builder(context)
+                            .data(R.drawable.img)
                             .build(),
-                    contentDescription = "Foto de perfil",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(CircleShape)
+                    contentDescription = "",
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .fillMaxSize()
                 )
 
+                // Botón cambiar foto
                 Surface(
                     modifier = Modifier
-                        .offset(x = (-6).dp, y = (-6).dp)
-                        .size(40.dp)
+                        .size(42.dp)
+                        .offset((-10).dp, (-10).dp)
                         .clip(CircleShape)
                         .clickable { pickImageLauncher.launch("image/*") },
                     color = MaterialTheme.colorScheme.primary,
-                    shadowElevation = 4.dp
+                    shadowElevation = 6.dp
                 ) {
                     Icon(
                         imageVector = Icons.Default.CameraAlt,
-                        contentDescription = "Cambiar foto",
+                        contentDescription = "Foto",
                         tint = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.padding(8.dp)
                     )
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(20.dp))
+
+
+            // NOMBRE
+            if (!editandoNombre) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = nombre,
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    )
+
+                    Spacer(Modifier.width(8.dp))
+
+                    IconButton(onClick = { editandoNombre = true }) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar")
+                    }
+                }
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    OutlinedTextField(
+                        value = nombre,
+                        onValueChange = { nombre = it },
+                        label = { Text("Tu nombre") }
+                    )
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            editandoNombre = false
+                            scope.launch { prefs.saveName(nombre) }
+                        }
+                    ) {
+                        Text("Guardar")
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
             Text(
-                text = nombre,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                text = "Viajero de corazón 🌍",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
 
-            Spacer(Modifier.height(12.dp))
-            Text("Viajero de corazón 🌍")
+            Spacer(Modifier.height(20.dp))
+
+            Divider()
+
+            Spacer(Modifier.height(20.dp))
         }
     }
 }

@@ -24,7 +24,7 @@ interface ApiService {
     suspend fun getUser(@Path("id") id: Int): UserDto
 
 
-
+    // ===== DESTINATIONS =====
     @GET("api/destinations")
     suspend fun getDestinations(
         @Query("category") category: String? = null,
@@ -45,4 +45,12 @@ interface ApiService {
         @Body request: DestinationCreateRequest
     ): DestinationDto
 
-    @DELETE
+    @DELETE("api/destinations/{id}")
+    suspend fun deleteDestination(
+        @Path("id") id: Long
+    ): Unit
+}
+
+annotation class DestinationCreateRequest
+
+annotation class DestinationDto

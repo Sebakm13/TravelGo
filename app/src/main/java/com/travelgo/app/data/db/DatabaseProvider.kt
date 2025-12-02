@@ -5,19 +5,15 @@ import androidx.room.Room
 
 object DatabaseProvider {
 
-    @Volatile
-    private var INSTANCE: AppDatabase? = null
+    private var instancia: AppDatabase? = null
 
     fun getDatabase(context: Context): AppDatabase {
-        return INSTANCE ?: synchronized(this) {
-            INSTANCE ?: Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                "travelgo.db"
-            )
-                .fallbackToDestructiveMigration()
-                .build()
-                .also { INSTANCE = it }
-        }
+        return instancia ?: Room.databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "travelgo-db"
+        ).fallbackToDestructiveMigration()
+            .build()
+            .also { instancia = it }
     }
 }

@@ -1,24 +1,27 @@
 package com.travelgo.app.data
 
 import com.travelgo.app.data.db.PaqueteLocal
-import com.travelgo.app.data.dao.PaqueteDao
 import kotlinx.coroutines.flow.Flow
 
 class PaqueteRepository(
-    private val dao: PaqueteDao
+    private val paqueteLocal: PaqueteLocal
 ) {
 
-    fun getAll(): Flow<List<PaqueteLocal>> = dao.getAll()
+    val paquetes: Flow<List<Paquete>> = paqueteLocal.getAllPaquetes()
 
-    suspend fun insert(paquete: PaqueteLocal) {
-        dao.insert(paquete)
+    suspend fun insertar(paquete: Paquete) {
+        paqueteLocal.insert(paquete)
     }
 
-    suspend fun update(paquete: PaqueteLocal) {
-        dao.update(paquete)
+    suspend fun actualizar(paquete: Paquete) {
+        paqueteLocal.update(paquete)
     }
 
-    suspend fun delete(paquete: PaqueteLocal) {
-        dao.delete(paquete)
+    suspend fun eliminar(paquete: Paquete) {
+        paqueteLocal.delete(paquete)
+    }
+
+    suspend fun obtenerPorId(id: Int): Paquete? {
+        return paqueteLocal.getById(id)
     }
 }

@@ -1,15 +1,24 @@
 package com.travelgo.app.data.db
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.travelgo.app.data.Paquete
+import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "paquetes")
-data class PaqueteLocal(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
-    val nombre: String,
-    val destino: String = "",
-    val descripcion: String,
-    val precio: Double,
-    val imagenUri: String? = null,
-    val creadoAt: Long = System.currentTimeMillis()
-)
+@Dao
+interface PaqueteLocal {
+
+    @Query("SELECT * FROM Paquete")
+    fun getAllPaquetes(): Flow<List<Paquete>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(paquete: Paquete)
+
+    @Update
+    suspend fun update(paquete: Paquete)
+
+    @Delete
+    suspend fun delete(paquete: Paquete)
+
+    @Query("SELECT * FROM Paquete WHERE id = :id")
+    suspend fun getById(id: Int): Paquete?
+}

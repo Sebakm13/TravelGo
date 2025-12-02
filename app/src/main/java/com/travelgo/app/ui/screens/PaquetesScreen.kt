@@ -1,16 +1,13 @@
 package com.travelgo.app.ui.screens
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -18,8 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,7 +27,6 @@ import com.travelgo.app.ui.components.TopBarWithBack
 @Composable
 fun PaquetesScreen(navController: NavController) {
 
-    
     var searchQuery by remember { mutableStateOf("") }
     var selectedDestino by remember { mutableStateOf("Todos") }
     var selectedPrecio by remember { mutableStateOf("Todos") }
@@ -48,11 +42,9 @@ fun PaquetesScreen(navController: NavController) {
         "Más de $400.000"
     )
 
-  
     val filteredPaquetes = demoPaquetes.filter { paquete ->
 
         val matchesName = paquete.titulo.contains(searchQuery, ignoreCase = true)
-
         val matchesDestino = selectedDestino == "Todos" || paquete.destino == selectedDestino
 
         val matchesPrecio = when (selectedPrecio) {
@@ -66,10 +58,15 @@ fun PaquetesScreen(navController: NavController) {
     }
 
     Scaffold(
-        topBar = { TopBarWithBack(navController, title = "Paquetes sustentables") },
+        topBar = {
+            TopBarWithBack(
+                title = "Paquetes sustentables",
+                onBack = { navController.popBackStack() }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.popBackStack() },
+                onClick = { navController.navigateUp() },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(
@@ -100,15 +97,11 @@ fun PaquetesScreen(navController: NavController) {
 
             Text(
                 text = "Filtra por destino, precio o nombre del paquete.",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
-                )
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.height(16.dp))
 
-           
-            
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -120,8 +113,6 @@ fun PaquetesScreen(navController: NavController) {
 
             Spacer(Modifier.height(12.dp))
 
-            
-            
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
                 // Destino
@@ -175,8 +166,6 @@ fun PaquetesScreen(navController: NavController) {
 
             Spacer(Modifier.height(24.dp))
 
-           
-            
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(bottom = 90.dp)
@@ -217,7 +206,6 @@ private fun PaqueteCard(paquete: PaqueteTuristico) {
             AsyncImage(
                 model = paquete.imagenUrl,
                 contentDescription = paquete.titulo,
-                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
@@ -228,26 +216,19 @@ private fun PaqueteCard(paquete: PaqueteTuristico) {
 
             Text(
                 text = paquete.titulo,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                style = MaterialTheme.typography.titleLarge
             )
 
             Text(
                 text = paquete.destino,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.height(8.dp))
 
             Text(
                 text = paquete.descripcion,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                style = MaterialTheme.typography.bodySmall
             )
 
             Spacer(Modifier.height(10.dp))
@@ -266,16 +247,15 @@ private fun PaqueteCard(paquete: PaqueteTuristico) {
                 )
 
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
                         text = paquete.enfoqueSustentable,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelMedium.copy(
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
                     )
                 }
             }

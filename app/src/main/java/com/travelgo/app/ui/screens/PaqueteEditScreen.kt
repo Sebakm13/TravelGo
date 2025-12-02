@@ -5,97 +5,83 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.platform.LocalContext
+import com.travelgo.app.data.Paquete
+import com.travelgo.app.data.db.DatabaseProvider
+import com.travelgo.app.data.PaqueteRepository
 import com.travelgo.app.ui.PaqueteViewModel
-import com.travelgo.app.ui.components.TopBarWithBack
+import com.travelgo.app.ui.PaqueteViewModelFactory
 
 @Composable
 fun PaqueteEditScreen(
-    navController: NavController,
-    viewModel: PaqueteViewModel,
-    id: Long?
+    paqueteId: Int,
+    onBack: () -> Unit
 ) {
-    val paquete = id?.let { viewModel.getById(it) }
+    val context = LocalContext.current
+    val db = DatabaseProvider.getDatabase(context)
+    val repo = PaqueteRepository(db.paqueteLocal())
 
-    var nombre by remember { mutableStateOf(paquete?.nombre ?: "") }
-    var destino by remember { mutableStateOf(paquete?.destino ?: "") }
-    var precioText by remember { mutableStateOf(paquete?.precio?.toString() ?: "") }
-    var descripcion by remember { mutableStateOf(paquete?.descripcion ?: "") }
+    val viewModel: PaqueteViewModel = viewModel(
+        factory = PaqueteViewModelFactory(repo)
+    )
 
-    val isEdit = id != null
+    var titulo by remember { mutableStateOf("") }
+    var descripcion by remember { mutableStateOf("") }
+    var precio by remember { mutableStateOf("") }
+
+    LaunchedEffect(paqueteId) {
+        if (paqueteId != 0) {
+            val paquete = viewModel.obtenerPorId(paqueteId)
+            paquete?.let {
+                titulo = it.titulo
+                descripcion = it.descripcion
+                precio = it.precio.toString()
+            }
+        }
+    }
 
     Scaffold(
-        topBar = {
-            TopBarWithBack(
-                title = if (isEdit) "Editar paquete" else "Nuevo paquete",
-                navController = navController
-            )
-        }
+        topBar = { Text("Editar Paquete", modifier = Modifier.padding(16.dp)) }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
-            )
+
+        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
 
             OutlinedTextField(
-                value = destino,
-                onValueChange = { destino = it },
-                label = { Text("Destino") },
-                modifier = Modifier.fillMaxWidth()
+                value = titulo,
+                onValueChange = { titulo = it },
+                label = { Text("Título") }
             )
 
-            OutlinedTextField(
-                value = precioText,
-                onValueChange = { precioText = it },
-                label = { Text("Precio") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
-            )
+            Spacer(Modifier.height(8.dp))
 
             OutlinedTextField(
                 value = descripcion,
                 onValueChange = { descripcion = it },
-                label = { Text("Descripción") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
+                label = { Text("Descripción") }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    val precio = precioText.toDoubleOrNull() ?: 0.0
-                    if (isEdit && id != null) {
-                        viewModel.update(
-                            id = id,
-                            nombre = nombre,
-                            destino = destino,
-                            precio = precio,
-                            descripcion = descripcion
-                        )
-                    } else {
-                        viewModel.add(
-                            nombre = nombre,
-                            destino = destino,
-                            precio = precio,
-                            descripcion = descripcion
-                        )
-                    }
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(if (isEdit) "Guardar cambios" else "Crear paquete")
+            OutlinedTextField(
+                value = precio,
+                onValueChange = { precio = it },
+                label = { Text("Precio") }
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Button(onClick = {
+                val p = Paquete(
+                    id = paqueteId,
+                    titulo = titulo,
+                    descripcion = descripcion,
+                    precio = precio.toIntOrNull() ?: 0
+                )
+                viewModel.insertar(p)
+                onBack()
+            }) {
+                Text("Guardar")
             }
         }
     }

@@ -1,7 +1,10 @@
 package com.travelgo.app.data.model
 
+// =========================
+// MODELO PRINCIPAL
+// =========================
 data class PaqueteTuristico(
-    val id: String,
+    val id: Int,
     val titulo: String,
     val descripcion: String,
     val precioPorPersona: Int,
@@ -10,32 +13,49 @@ data class PaqueteTuristico(
     val enfoqueSustentable: String
 )
 
-// Cliente
+
+// =========================
+// CLIENTE
+// =========================
 data class Cliente(
+    val id: Int,
     val nombre: String,
     val email: String,
     val telefono: String,
     val pais: String
 )
 
-// Reserva
+
+// =========================
+// RESERVA
+// =========================
 data class Reserva(
-    val id: String,
-    val paqueteId: String,
+    val id: Int,
+    val paqueteId: Int,
     val fecha: String,
-    val personas: Int
+    val personas: Int,
+    val clienteId: Int
 )
 
-// Pago
+
+// =========================
+// PAGO
+// =========================
 data class Pago(
-    val id: String,
-    val reservaId: String,
+    val id: Int,
+    val reservaId: Int,
     val montoTotal: Int,
-    val metodo: String
+    val metodo: String,        // Ej: "Débito", "Crédito", "PayPal"
+    val estado: String         // Ej: "Completado", "Pendiente"
 )
 
-// Itinerario
+
+// =========================
+// ITINERARIO
+// =========================
 data class Itinerario(
+    val id: Int,
+    val paqueteId: Int,
     val dia: Int,
     val actividad: String,
     val hora: String,
@@ -43,9 +63,12 @@ data class Itinerario(
 )
 
 
+// =========================
+// LISTA DE DEMO
+// =========================
 val demoPaquetes = listOf(
     PaqueteTuristico(
-        id = "p1",
+        id = 1,
         titulo = "Atacama Eco Experience",
         descripcion = "4 días en San Pedro de Atacama con guías locales, observación astronómica y visita a comunidades atacameñas.",
         precioPorPersona = 320000,
@@ -54,7 +77,7 @@ val demoPaquetes = listOf(
         enfoqueSustentable = "Turismo comunitario / astro turismo responsable"
     ),
     PaqueteTuristico(
-        id = "p2",
+        id = 2,
         titulo = "Ruta Lagos & Bosques",
         descripcion = "Trekking guiado, alojamiento en eco-lodges familiares y navegación en lagos del sur.",
         precioPorPersona = 410000,
@@ -63,7 +86,7 @@ val demoPaquetes = listOf(
         enfoqueSustentable = "Alojamiento sustentable / apoyo a economías locales"
     ),
     PaqueteTuristico(
-        id = "p3",
+        id = 3,
         titulo = "Costa & Ballenas",
         descripcion = "Avistamiento responsable de fauna marina y estadía en hostales de comunidad pesquera.",
         precioPorPersona = 280000,

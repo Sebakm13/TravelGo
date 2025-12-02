@@ -2,72 +2,62 @@ package com.travelgo.app.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.travelgo.app.ui.PaqueteViewModel
-import com.travelgo.app.ui.components.TopBarWithBack
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaqueteDetailScreen(
-    navController: NavController,
-    id: Long,
-    viewModel: PaqueteViewModel,
+    paqueteId: Int,
+    onBack: () -> Unit,
     onEdit: () -> Unit
 ) {
-    val paquete = viewModel.getById(id)
+    val viewModel: PaqueteViewModel = viewModel()
+    var paquete by remember { mutableStateOf<com.travelgo.app.data.Paquete?>(null) }
+
+    LaunchedEffect(paqueteId) {
+        paquete = viewModel.obtenerPorId(paqueteId)
+    }
 
     Scaffold(
         topBar = {
-            TopBarWithBack(
-                title = "Detalle paquete",
-                navController = navController
+            TopAppBar(
+                title = { Text("Detalle del Paquete") }
             )
         }
-    ) { padding ->
-        if (paquete == null) {
-            Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Paquete no encontrado")
-            }
-        } else {
+    ) { paddingValues ->
+
+        paquete?.let { p ->
             Column(
                 modifier = Modifier
-                    .padding(padding)
+                    .padding(paddingValues)
                     .padding(16.dp)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+
                 Text(
-                    text = paquete.nombre,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
+                    text = p.titulo,
+                    style = MaterialTheme.typography.titleLarge
                 )
-                Text(text = "Destino: ${paquete.destino}")
-                Text(text = "Precio: $${paquete.precio}")
-                Text(text = "Descripción:")
-                Text(text = paquete.descripcion)
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Text(text = p.descripcion)
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
+                Text(text = "Precio: ${p.precio}")
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row {
                     Button(onClick = onEdit) {
                         Text("Editar")
                     }
-                    OutlinedButton(onClick = {
-                        viewModel.delete(id)
-                        navController.popBackStack()
-                    }) {
-                        Text("Eliminar")
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    OutlinedButton(onClick = onBack) {
+                        Text("Volver")
                     }
                 }
             }
