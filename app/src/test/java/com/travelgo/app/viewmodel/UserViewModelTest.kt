@@ -11,22 +11,18 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-// Modelo simple de usuario
 data class User(val username: String, val email: String)
 
-// Interfaz del repositorio
 interface UserRepository {
     suspend fun getUser(id: String): User
 }
 
-// Fake repository para tests
 class FakeUserRepository : UserRepository {
     override suspend fun getUser(id: String): User {
         return User(username = "testUser", email = "test@example.com")
     }
 }
 
-// ViewModel simplificado
 class UserViewModel(private val repository: UserRepository, private val id: String) {
 
     private val _userState = MutableStateFlow(User("", ""))
@@ -49,7 +45,6 @@ class UserViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        // Inicializa el repository fake y ViewModel
         repository = FakeUserRepository()
         viewModel = UserViewModel(repository, "123")
     }

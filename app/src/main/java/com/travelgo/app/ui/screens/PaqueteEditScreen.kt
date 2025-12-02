@@ -20,7 +20,7 @@ fun PaqueteEditScreen(
 ) {
     val context = LocalContext.current
     val db = DatabaseProvider.getDatabase(context)
-    val repo = PaqueteRepository(db.paqueteLocal())
+    val repo = PaqueteRepository(db.PaqueteDao())
 
     val viewModel: PaqueteViewModel = viewModel(
         factory = PaqueteViewModelFactory(repo)

@@ -5,12 +5,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 
-// ==========================
-//  API CLIENT PRINCIPAL
-// ==========================
 object ApiClient {
 
-    // -------- SERVICIO DE USUARIOS --------
     private const val BASE_URL = "http://10.0.2.2:8082/"
 
     private val retrofit = Retrofit.Builder()
@@ -20,9 +16,8 @@ object ApiClient {
 
     val userApi: UserApi = retrofit.create(UserApi::class.java)
     val tripsApi: TripsApi = retrofit.create(TripsApi::class.java)
+    val authApi: AuthApi = retrofit.create(AuthApi::class.java)
 
-
-    // -------- SERVICIO DE DESTINOS --------
     private const val DESTINOS_URL = "http://10.0.2.2:8081/"
 
     private val destinosRetrofit = Retrofit.Builder()
@@ -33,7 +28,6 @@ object ApiClient {
     val destinationsApi: ApiService = destinosRetrofit.create(ApiService::class.java)
 
 
-    // -------- SERVICIO DE CLIMA (Externo) --------
     val weatherApi: WeatherApi = Retrofit.Builder()
         .baseUrl("https://api.openweathermap.org/")
         .addConverterFactory(GsonConverterFactory.create())
@@ -42,10 +36,6 @@ object ApiClient {
 }
 
 
-
-// ==========================
-//  API USUARIOS
-// ==========================
 data class ApiUserDto(
     val id: Int,
     val name: String?,
@@ -59,11 +49,6 @@ interface UserApi {
     suspend fun getUser(@Path("id") id: Int): ApiUserDto
 }
 
-
-
-// ==========================
-//  API TRIPS
-// ==========================
 data class TripDto(
     val id: Long?,
     val title: String,
@@ -82,11 +67,6 @@ interface TripsApi {
     suspend fun createTrip(@Body trip: TripDto): TripDto
 }
 
-
-
-// ==========================
-//  API CLIMA
-// ==========================
 data class WeatherResponse(
     val weather: List<Map<String, Any>>,
     val main: Map<String, Any>

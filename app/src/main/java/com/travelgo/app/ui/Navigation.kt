@@ -26,27 +26,22 @@ fun Navigation(
             RegisterScreen(navController, prefs)
         }
 
-        // ---------- HOME ----------
         composable("home") {
             HomeScreen(navController, prefs)
         }
 
-        // ---------- PAQUETES DEMO (con imágenes y filtros) ----------
         composable("paquetes") {
             PaquetesScreen(navController)
         }
 
-        // ---------- PERFIL ----------
         composable("perfil") {
             PerfilScreen(navController, prefs)
         }
 
-        // ---------- RESERVA ----------
         composable("reserva") {
             ReservaScreen(navController)
         }
 
-        // ---------- PAQUETES CRUD (ROOM) ----------
         composable("paquetesCrud") {
             PaqueteListScreen(
                 onPaqueteClick = { id ->

@@ -1,8 +1,5 @@
 package com.travelgo.app.data.model
 
-// =========================
-// MODELO PRINCIPAL
-// =========================
 data class PaqueteTuristico(
     val id: Int,
     val titulo: String,
@@ -13,10 +10,6 @@ data class PaqueteTuristico(
     val enfoqueSustentable: String
 )
 
-
-// =========================
-// CLIENTE
-// =========================
 data class Cliente(
     val id: Int,
     val nombre: String,
@@ -25,10 +18,6 @@ data class Cliente(
     val pais: String
 )
 
-
-// =========================
-// RESERVA
-// =========================
 data class Reserva(
     val id: Int,
     val paqueteId: Int,
@@ -37,22 +26,14 @@ data class Reserva(
     val clienteId: Int
 )
 
-
-// =========================
-// PAGO
-// =========================
 data class Pago(
     val id: Int,
     val reservaId: Int,
     val montoTotal: Int,
-    val metodo: String,        // Ej: "Débito", "Crédito", "PayPal"
-    val estado: String         // Ej: "Completado", "Pendiente"
+    val metodo: String,
+    val estado: String
 )
 
-
-// =========================
-// ITINERARIO
-// =========================
 data class Itinerario(
     val id: Int,
     val paqueteId: Int,
@@ -62,10 +43,6 @@ data class Itinerario(
     val lugar: String
 )
 
-
-// =========================
-// LISTA DE DEMO
-// =========================
 val demoPaquetes = listOf(
     PaqueteTuristico(
         id = 1,

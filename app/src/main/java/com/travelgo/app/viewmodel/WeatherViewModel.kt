@@ -3,7 +3,7 @@ package com.travelgo.app.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.travelgo.app.data.remote.weather.WeatherResponse
-import com.travelgo.app.data.repository.WeatherRepository
+import com.travelgo.app.data.Repository.WeatherRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

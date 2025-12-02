@@ -14,27 +14,21 @@ object RetrofitClient {
 
     fun create(context: Context): Retrofit {
 
-        // 1️⃣ SessionManager para manejar el token
         val sessionManager = SessionManager(context)
 
-        // 2️⃣ AuthInterceptor para inyectar el token automáticamente
         val authInterceptor = AuthInterceptor(sessionManager)
 
-        // 3️⃣ HttpLoggingInterceptor para debugging
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY  // ⚠️ Cambiar a NONE en producción
+            level = HttpLoggingInterceptor.Level.BODY
         }
 
-        // 4️⃣ OkHttpClient con AMBOS interceptores
         val okHttpClient = OkHttpClient.Builder()
-            // ⚠️ ORDEN IMPORTANTE: AuthInterceptor primero, luego Logging
-            .addInterceptor(authInterceptor)    // Añade el token
-            .addInterceptor(loggingInterceptor)  // Muestra en Logcat (con token)
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
 
-        // 5️⃣ Retrofit con el cliente configurado
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

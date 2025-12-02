@@ -10,5 +10,5 @@ data class LoginRequest(
     val password: String,
 
     @SerializedName("expiresInMins")
-    val expiresInMins: Int = 30  // Token expira en 30 minutos
+    val expiresInMins: Int = 30
 )

@@ -6,7 +6,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-// --- Configuración del DataStore ---
 val Context.dataStore by preferencesDataStore("user_prefs")
 
 class UserPrefsDataStore(private val context: Context) {

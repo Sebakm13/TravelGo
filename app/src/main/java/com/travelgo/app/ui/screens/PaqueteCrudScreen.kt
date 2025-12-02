@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.travelgo.app.data.Paquete
 import com.travelgo.app.data.PaqueteRepository
 import com.travelgo.app.data.db.DatabaseProvider
 import com.travelgo.app.ui.PaqueteViewModel
@@ -23,7 +22,7 @@ fun PaqueteCrudScreen(navController: NavController) {
     // ========== ViewModel con Factory ==========
     val context = LocalContext.current
     val db = DatabaseProvider.getDatabase(context)
-    val dao = db.paqueteLocal()
+    val dao = db.PaqueteDao()
     val repo = PaqueteRepository(dao)
 
     val viewModel: PaqueteViewModel = viewModel(

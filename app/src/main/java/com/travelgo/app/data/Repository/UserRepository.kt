@@ -11,12 +11,9 @@ class UserRepository(private val context: Context) {
 
     private val api = ApiClient.userApi
 
-    // fetchUser devuelve Result<User>
     suspend fun fetchUser(id: Int): Result<User> = withContext(Dispatchers.IO) {
         try {
-            // ejemplo: llamada a microservicio user-service
             val dto = api.getUser(id)
-            // Map DTO -> Model (asume que ApiUserDto tiene same fields)
             val user = User(
                 id = dto.id.toString(),
                 name = dto.name ?: "",

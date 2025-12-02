@@ -2,13 +2,14 @@ package com.travelgo.app.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.travelgo.app.data.Paquete
+import com.travelgo.app.data.dao.PaqueteDao
 
 @Database(
-    entities = [Paquete::class],
+    entities = [PaqueteLocal::class],
     version = 1,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun paqueteLocal(): PaqueteLocal
+
+    abstract fun PaqueteDao(): PaqueteDao
 }

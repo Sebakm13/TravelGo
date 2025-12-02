@@ -19,11 +19,9 @@ data class ProfileUiState(
 
 class ProfileViewModel(
     application: Application,
-    // inyectable para tests y para facilitar DI en futuro (Hilt)
     private val repositoryOverride: UserRepository? = null
 ) : AndroidViewModel(application) {
 
-    // en prod se crea con la app, en test se pasa mock
     private val repository: UserRepository =
         repositoryOverride ?: UserRepository(application)
 

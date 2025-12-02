@@ -1,4 +1,4 @@
-package com.travelgo.app.data.repository
+package com.travelgo.app.data.Repository
 
 import com.travelgo.app.data.remote.weather.WeatherService
 import com.travelgo.app.data.remote.weather.WeatherResponse
