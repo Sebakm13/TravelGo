@@ -1,0 +1,5 @@
+com\travelgo\destinations\model\Destination.class
+com\travelgo\destinations\TravelGoDestinationsApplication.class
+com\travelgo\destinations\controller\DestinationController.class
+com\travelgo\destinations\repository\DestinationRepository.class
+com\travelgo\destinations\service\DestinationService.class
