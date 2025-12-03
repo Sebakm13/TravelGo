@@ -1,7 +1,5 @@
-package com.travelgo.app.data.repository
+package com.travelgo.app.data.Repository
 
-import com.travelgo.app.data.Repository.IUserRepository
-import com.travelgo.app.data.Repository.UserApi
 import com.travelgo.app.data.model.User
 
 class UserRepositoryImpl(

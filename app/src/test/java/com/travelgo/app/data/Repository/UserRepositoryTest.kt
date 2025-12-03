@@ -1,27 +1,41 @@
-package com.travelgo.app.data.repository
+package com.travelgo.app.data.Repository
 
-import com.travelgo.app.data.repository.UserRepository
 import com.travelgo.app.data.model.User
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.*
+import org.junit.Test
 
-data class User(
-    val id: Int,
-    val nombre: String,
-    val email: String
-)
+class UserRepositoryTest {
 
-open class UserRepository(val api: UserApi) {
-
-    open suspend fun fetchUser(userId: Int): Result<com.travelgo.app.data.model.User> {
-        return try {
-            val user = api.getUserById(userId)
-            Result.success(user)
-        } catch (e: Exception) {
-            Result.failure(e)
+    @Test
+    fun fetchUser_returnsSuccess_whenApiReturnsUser() = runBlocking {
+        val fakeApi = object : UserApi {
+            override suspend fun getUserById(id: Int): User {
+                return User(id = id, name = "Sebastián", email = "sebastian@test.com")
+            }
         }
-    }
-}
 
-// Interfaz para simular API
-interface UserApi {
-    suspend fun getUserById(id: Int): User
+        val repo = UserRepository(fakeApi)
+
+        val result = repo.fetchUser(1)
+
+        assertTrue(result.isSuccess)
+        assertEquals("Sebastián", result.getOrNull()?.name)
+        assertEquals("sebastian@test.com", result.getOrNull()?.email)
+    }
+
+    @Test
+    fun fetchUser_returnsFailure_whenApiThrowsException() = runBlocking {
+        val fakeApi = object : UserApi {
+            override suspend fun getUserById(id: Int): User {
+                throw RuntimeException("API error")
+            }
+        }
+
+        val repo = UserRepository(fakeApi)
+
+        val result = repo.fetchUser(1)
+
+        assertTrue(result.isFailure)
+    }
 }

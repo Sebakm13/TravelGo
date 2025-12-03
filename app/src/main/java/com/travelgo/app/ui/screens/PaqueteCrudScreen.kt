@@ -10,7 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.travelgo.app.data.PaqueteRepository
+import com.travelgo.app.data.Repository.PaqueteRepository
 import com.travelgo.app.data.db.DatabaseProvider
 import com.travelgo.app.ui.PaqueteViewModel
 import com.travelgo.app.ui.PaqueteViewModelFactory
@@ -22,7 +22,7 @@ fun PaqueteCrudScreen(navController: NavController) {
     // ========== ViewModel con Factory ==========
     val context = LocalContext.current
     val db = DatabaseProvider.getDatabase(context)
-    val dao = db.PaqueteDao()
+    val dao = db.paqueteLocal()
     val repo = PaqueteRepository(dao)
 
     val viewModel: PaqueteViewModel = viewModel(
@@ -51,7 +51,7 @@ fun PaqueteCrudScreen(navController: NavController) {
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(Modifier.padding(16.dp)) {
-                            Text(p.titulo, style = MaterialTheme.typography.titleLarge)
+                            Text(p.nombre, style = MaterialTheme.typography.titleLarge)
                             Text(p.descripcion, style = MaterialTheme.typography.bodyMedium)
                             Text("$${p.precio}", style = MaterialTheme.typography.bodySmall)
                         }

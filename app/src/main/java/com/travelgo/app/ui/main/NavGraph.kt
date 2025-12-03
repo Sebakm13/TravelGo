@@ -13,7 +13,7 @@ import com.travelgo.app.ui.screens.*
 @Composable
 fun TravelNavGraph(
     viewModel: PaqueteViewModel,
-    prefs: UserPrefsDataStore, // ✅ ← agrégalo aquí
+    prefs: UserPrefsDataStore,
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(navController, startDestination = "list") {
@@ -66,5 +66,9 @@ fun TravelNavGraph(
                 onDone = { navController.popBackStack() }
             )
         }
+        composable("crud") {
+            PaqueteCrudScreen(navController)
+        }
+
     }
 }

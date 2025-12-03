@@ -30,10 +30,9 @@ import com.travelgo.app.ui.components.TopBarWithBack
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerfilScreen(
-    navController: NavController,
+    navController: NavController, // Asegúrate de recibir el navController aquí
     prefs: UserPrefsDataStore
 ) {
     val context = LocalContext.current
@@ -62,8 +61,8 @@ fun PerfilScreen(
     Scaffold(
         topBar = {
             TopBarWithBack(
-                title = "Mi Perfil",
-                onBack = { navController.popBackStack() }
+                navController = navController,
+                title = "Mi Perfil"
             )
         }
     ) { padding ->
@@ -75,7 +74,6 @@ fun PerfilScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(Modifier.height(20.dp))
 
             // FOTO CON BORDE DEGRADADO
@@ -92,7 +90,7 @@ fun PerfilScreen(
                         shape = CircleShape
                     )
                     .padding(5.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape), // Aquí pasas la imagen
 
                 contentAlignment = Alignment.BottomEnd
             ) {
@@ -128,7 +126,6 @@ fun PerfilScreen(
             }
 
             Spacer(Modifier.height(20.dp))
-
 
             // NOMBRE
             if (!editandoNombre) {

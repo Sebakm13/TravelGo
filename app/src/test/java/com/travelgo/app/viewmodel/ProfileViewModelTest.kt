@@ -1,5 +1,6 @@
 package com.travelgo.app.viewmodel
 
+import android.R.attr.id
 import android.app.Application
 import com.travelgo.app.data.Repository.IUserRepository
 import com.travelgo.app.data.model.User
@@ -28,7 +29,7 @@ class ProfileViewModelTest {
 
     // Ajustado a tu modelo real
     private val fakeUser = User(
-        id = "1",
+        id = id,
         name = "Juan Perez",
         email = "juan@test.com",
         avatarUrl = null

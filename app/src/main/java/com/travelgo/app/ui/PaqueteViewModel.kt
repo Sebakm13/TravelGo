@@ -1,33 +1,46 @@
 package com.travelgo.app.ui
 
 import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.ViewModelProvider
-import com.travelgo.app.data.Paquete
-import com.travelgo.app.data.PaqueteRepository
-import com.travelgo.app.data.datastore.UserPrefsDataStore
+import androidx.lifecycle.viewModelScope
+import com.travelgo.app.data.Repository.PaqueteRepository
+import com.travelgo.app.data.db.PaqueteLocal
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class PaqueteViewModel(private val prefs: UserPrefsDataStore) : ViewModel() {
+class PaqueteViewModel(private val repository: PaqueteRepository) : ViewModel() {
 
-    private val repo = PaqueteRepository()
-    var paquetes = mutableStateListOf<Paquete>()
-        private set
+    // Flow -> StateFlow para Compose
+    val paquetes = repository.getAll().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
 
-    init {
-        paquetes.addAll(repo.getAll())
+    fun insert(paquete: PaqueteLocal) {
+        viewModelScope.launch {
+            repository.insert(paquete)
+        }
     }
 
-    fun getById(id: Long) = paquetes.find { it.id == id }
-
-    fun add(nombre: String, destino: String, precio: Double, descripcion: String) {
-        repo.insert(Paquete(0, nombre, destino, precio, descripcion))
-        paquetes.clear()
-        paquetes.addAll(repo.getAll())
+    fun update(paquete: PaqueteLocal) {
+        viewModelScope.launch {
+            repository.update(paquete)
+        }
     }
 
-    fun update(id: Long, nombre: String, destino: String, precio: Double, descripcion: String) {
-        repo.update(Paquete(id, nombre, destino, precio, descripcion))
-        paquetes.clear()
-        paquetes.addAll(repo.getAll())
+    fun delete(paquete: PaqueteLocal) {
+        viewModelScope.launch {
+            repository.delete(paquete)
+        }
     }
+
+    fun getById(id: Long, onResult: (PaqueteLocal?) -> Unit) {
+        viewModelScope.launch {
+            val paquete = repository.getById(id)
+            onResult(paquete)
+        }
+    }
+
 }
+

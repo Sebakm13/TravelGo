@@ -10,65 +10,70 @@ import com.travelgo.app.ui.screens.*
 @Composable
 fun Navigation(
     navController: NavHostController,
-    prefs: UserPrefsDataStore
+    prefs: UserPrefsDataStore,
+    viewModel: PaqueteViewModel // Pasar el ViewModel aquí
 ) {
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
-
         // ---------- AUTH ----------
         composable("login") {
-            LoginScreen(navController, prefs)
+            LoginScreen(navController = navController, prefs = prefs)
         }
 
         composable("register") {
-            RegisterScreen(navController, prefs)
+            RegisterScreen(navController = navController, prefs = prefs)
         }
 
+        // ---------- HOME ----------
         composable("home") {
-            HomeScreen(navController, prefs)
+            HomeScreen(navController = navController, prefs = prefs)
         }
 
+        // ---------- PAQUETES DEMO ----------
         composable("paquetes") {
-            PaquetesScreen(navController)
+            PaquetesScreen(navController = navController)
         }
 
+        // ---------- PERFIL ----------
         composable("perfil") {
-            PerfilScreen(navController, prefs)
+            PerfilScreen(navController = navController, prefs = prefs) // Pasar navController
         }
 
+        // ---------- RESERVA ----------
         composable("reserva") {
-            ReservaScreen(navController)
+            ReservaScreen(navController = navController)
         }
 
+        // ---------- PAQUETES CRUD ----------
         composable("paquetesCrud") {
             PaqueteListScreen(
-                onPaqueteClick = { id ->
-                    navController.navigate("paqueteDetalle/$id")
-                },
-                onAddClick = {
-                    navController.navigate("paqueteEditar/0")
-                }
+                viewModel = viewModel,
+                onAdd = { navController.navigate("paqueteEditar/0") },
+                onOpen = { id -> navController.navigate("paqueteDetalle/$id") }
             )
         }
 
         composable("paqueteDetalle/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
+            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0
 
             PaqueteDetailScreen(
-                paqueteId = id,
-                onBack = { navController.popBackStack() },
-                onEdit = { navController.navigate("paqueteEditar/$id") }
+                id = id,
+                viewModel = viewModel,
+                onEdit = { navController.navigate("paqueteEditar/$id") },
+                navController = navController // Pasar navController
             )
         }
 
         composable("paqueteEditar/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
+            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0
 
             PaqueteEditScreen(
-                paqueteId = id,
-                onBack = { navController.popBackStack() }
+                navController = navController,
+                editId = id,
+                viewModel = viewModel,
+                onDone = { navController.popBackStack() }
             )
         }
     }

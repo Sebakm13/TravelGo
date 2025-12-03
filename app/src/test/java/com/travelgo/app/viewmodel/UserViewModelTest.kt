@@ -1,5 +1,6 @@
 package com.travelgo.app.viewmodel
 
+import android.R.attr.id
 import com.travelgo.app.data.Repository.IUserRepository
 import com.travelgo.app.data.model.User
 import io.mockk.coEvery
@@ -25,7 +26,7 @@ class UserViewModelTest {
 
         coEvery { repository.getUserById(1) } returns Result.success(
             User(
-                id = "1",
+                id = id,
                 name = "John Doe",
                 email = "john@example.com",
                 avatarUrl = null

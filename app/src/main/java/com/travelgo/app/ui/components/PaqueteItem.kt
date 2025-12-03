@@ -20,8 +20,9 @@ fun PaqueteItem(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
+            // Cambia 'titulo' por 'nombre' o el nombre correcto en tu modelo
             Text(
-                text = paquete.titulo,
+                text = paquete.nombre, // Usamos 'nombre' en lugar de 'titulo'
                 style = MaterialTheme.typography.titleLarge
             )
 

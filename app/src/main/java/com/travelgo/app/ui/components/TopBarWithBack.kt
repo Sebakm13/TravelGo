@@ -9,7 +9,10 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBarWithBack(navController: NavController, title: String) {
+fun TopBarWithBack(
+    navController: NavController, // Recibe el navController
+    title: String // Recibe el título
+) {
     TopAppBar(
         title = {
             Text(

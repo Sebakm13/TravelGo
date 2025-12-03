@@ -2,13 +2,11 @@ package com.travelgo.app.data.Repository
 
 import com.travelgo.app.data.model.User
 
-class UserRepository(
-    private val api: UserApi
-) : IUserRepository {
+open class UserRepository(val api: UserApi) {
 
-    override suspend fun getUserById(id: Int): Result<User> {
+    open suspend fun fetchUser(userId: Int): Result<User> {
         return try {
-            val user = api.getUserById(id)
+            val user = api.getUserById(userId)
             Result.success(user)
         } catch (e: Exception) {
             Result.failure(e)
@@ -16,11 +14,9 @@ class UserRepository(
     }
 }
 
-interface IUserRepository {
-    suspend fun getUserById(id: Int): Result<User>
-}
-
-
 interface UserApi {
     suspend fun getUserById(id: Int): User
+}
+interface IUserRepository {
+    suspend fun getUserById(id: Int): Result<User>
 }

@@ -1,6 +1,8 @@
 package com.travelgo.app.data
 
-class PaqueteRepository {
+import com.travelgo.app.data.dao.PaqueteDao
+
+class PaqueteRepository(dao: PaqueteDao) {
 
     // datos de prueba
     private val lista = mutableListOf(

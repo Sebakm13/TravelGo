@@ -67,8 +67,8 @@ fun ReservaScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopBarWithBack(
-                title = "Reserva tu experiencia",
-                onBack = { navController.popBackStack() }
+                navController = navController,
+                title = "Mi Perfil"
             )
         }
     ) { padding ->

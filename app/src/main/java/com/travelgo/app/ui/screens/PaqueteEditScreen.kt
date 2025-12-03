@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.travelgo.app.data.db.PaqueteLocal
 import com.travelgo.app.ui.PaqueteViewModel
 import com.travelgo.app.ui.components.TopBarWithBack
 
@@ -21,16 +22,28 @@ fun PaqueteEditScreen(
     viewModel: PaqueteViewModel,
     onDone: () -> Unit
 ) {
-    val editItem = editId?.let { viewModel.getById(it) }
+    var paquete by remember { mutableStateOf<PaqueteLocal?>(null) }
 
-    var nombre by remember { mutableStateOf(editItem?.nombre ?: "") }
-    var destino by remember { mutableStateOf(editItem?.destino ?: "") }
-    var precio by remember { mutableStateOf(editItem?.precio?.toString() ?: "") }
-    var descripcion by remember { mutableStateOf(editItem?.descripcion ?: "") }
+    // Si estamos editando, cargar el paquete
+    LaunchedEffect(editId) {
+        if (editId != null) {
+            viewModel.getById(editId) { result ->
+                paquete = result
+            }
+        }
+    }
+
+    var nombre by remember { mutableStateOf(paquete?.nombre ?: "") }
+    var precio by remember { mutableStateOf(paquete?.precio?.toString() ?: "") }
+    var descripcion by remember { mutableStateOf(paquete?.descripcion ?: "") }
 
     Scaffold(
-        topBar = { TopBarWithBack(navController, title = if (editId == null) "Nuevo Paquete" else "Editar Paquete") },
-        containerColor = MaterialTheme.colorScheme.background
+        topBar = {
+            TopBarWithBack(
+                navController = navController,
+                title = "Mi Perfil"
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -39,37 +52,19 @@ fun PaqueteEditScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                text = if (editId == null) "Crea un nuevo paquete" else "Actualiza los detalles",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.primary
-            )
 
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
                 label = { Text("Nombre del paquete") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            OutlinedTextField(
-                value = destino,
-                onValueChange = { destino = it },
-                label = { Text("Destino") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = precio,
                 onValueChange = { precio = it },
                 label = { Text("Precio (USD)") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
@@ -79,7 +74,6 @@ fun PaqueteEditScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
-                shape = RoundedCornerShape(12.dp),
                 maxLines = 4
             )
 
@@ -87,24 +81,37 @@ fun PaqueteEditScreen(
 
             Button(
                 onClick = {
-                    if (editId == null)
-                        viewModel.add(nombre, destino, precio.toDoubleOrNull() ?: 0.0, descripcion)
-                    else
-                        viewModel.update(editId, nombre, destino, precio.toDoubleOrNull() ?: 0.0, descripcion)
+                    val precioInt = precio.toIntOrNull() ?: 0
+
+                    if (editId == null) {
+                        // Crear nuevo paquete
+                        viewModel.insert(
+                            PaqueteLocal(
+                                nombre = nombre,
+                                descripcion = descripcion,
+                                precio = precioInt
+                            )
+                        )
+                    } else {
+                        // Actualizar paquete existente
+                        viewModel.update(
+                            PaqueteLocal(
+                                id = editId,
+                                nombre = nombre,
+                                descripcion = descripcion,
+                                precio = precioInt,
+                                creadoAt = paquete?.creadoAt ?: System.currentTimeMillis()
+                            )
+                        )
+                    }
 
                     onDone()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                    .height(56.dp)
             ) {
-                Text(
-                    text = if (editId == null) "Guardar" else "Actualizar",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(text = if (editId == null) "Guardar" else "Actualizar")
             }
         }
     }
