@@ -1,135 +1,82 @@
-Nombre del Proyecto: TravelGo
+Nombre del Proyecto: Travelgo
 
-1. Caso elegido y su alcance
-- el caso escogido fue TravelGo, en donde tenemos que realizar una aplicación móvil donde se gestiónen viajes.
-- alcance del proyecto: el proyecto incluye un diseño/UI, validaciones, una navegación simple, gestioness de estado y persostencia local, ademas de recursos nativos, animaciones y un consumo de Api (incluyendo'/me')
+una aplicacion móvil de turismo desarrollada por nosotros, incluytendo un diseño de interfaz, validaciones, navegación, persistencia, backend propio y un consumo de API externa
 
-2. Requisitos y ejecución del proyecto
+Integrantes
+Sebastián Alejandro
+Sebastián Aird
 
--Stack contiene:
--el lengiaje Kotlin
--una UI con Jetpack Compose + material 3
--una arquitectura MVVM con ViewModel Y StateFlow
-- Librerías: Retrofit, Gson, Coil y Coroutines
+Funcionalidad del proyecto
 
--Instalación
-   -Primero clonar el repositorio
-   git clone https://github.com/Sebakm13/TravelGo.git
-   -segundo paso Abrir el proyecto en Android Studio
-   -Tercer paso, esperar la sincronizacion de Gradle
+1.Autenticación
+tiene registro de usuario con validaciones de campos
+tiene un inicio de sesión persisntente gracias al DataStore
+además de un manejo de errores y mensajes de validación
 
-- Ejecución:
-  -Seleccionar un emulador o dispositivo físico (preferiblemente el Pixel 7 PRO).
-  -Ejecutar con el botón Run ▶️.
-  -La app inicia mostrando la pantalla principal y luego el login, donde habran más opciones      uha222  1para navegar.
+2. Navegacion principal
+Navegacion con varias pantallas que usan Jetpack compose navigation
+pantalla principal con microinteracciones y animaciones
+acceso a una lista de paquetes turisticos
 
-3. Arquitectura y flujo del proyecto
-Sigue la arquitectura MVVM, separando la lógica de negocio de la interfaz de usuario
+3. gestion de paquetes turisticos
+listado completo de paquetes desde el backend
+detalle de cada paquete.
+tienen tambien una edicion,creacion y eliminacion de paquetes a travez de los microservicios
+y un manejo de estados: loading/success/error
 
-├──app
-|  ├──manifests
-|  |  ├──AndroidManifest.xml
-|  ├──kotlin+java
-|  |  ├──data
-|  |  |  ├──dao
-|  |  |  |  ├── paquereDao
-|  |  |  |  ├── UserDao.kt
-|  |  |  ├── datastore
-|  |  |  |  ├──UserPredsDataStore.kt
-|  |  |  ├──db
-|  |  |  |  ├──AppDatabase
-|  |  |  |  ├──DatabaseProvider
-|  |  |  |  ├──PaqueteLocal
-|  |  |  ├──local
-|  |  |  |  ├──SessionManager
-|  |  |  ├──model
-|  |  |  |  ├──Entities.kt
-|  |  |  |  ├──User
-|  |  |  ├──remote
-|  |  |  |  ├──dto
-|  |  |  |  |  ├──LoginRequest
-|  |  |  |  |  ├──LoginResponse
-|  |  |  |  |  ├──UserDto
-|  |  |  |  |  ├──UsersResponse
-|  |  |  |  ├──ApiService
-|  |  |  |  ├──AuthInterceptor
-|  |  |  |  ├──RetrofitClient
-|  |  |  ├──Repository
-|  |  |  |  ├──AvatarRepository.kt
-|  |  |  |  ├──PaqueteRepository
-|  |  |  |  ├──UserRepository
-|  |  |  ├──Paquete
-|  |  |  ├──PaqueteRepository
-|  |  ├──ui
-|  |  |  ├──components
-|  |  |  |  ├──ImagePickerDialog.kt
-|  |  |  |  ├──TopBarWithBack
-|  |  |  ├──main
-|  |  |  |  ├──NavGraph.kt
-|  |  |  ├──screens
-|  |  |  |  ├──HomeScreen.kt 
-|  |  |  |  ├──LoginScreen.kt
-|  |  |  |  ├──PaqueteDetailScreen.kt
-|  |  |  |  ├──PaqueteEditScreen.kt
-|  |  |  |  ├──PaqueteListScreen.kt
-|  |  |  |  ├──PaquetesScreen.kt
-|  |  |  |  ├──PerfilScreen.kt
-|  |  |  |  ├──ReservaScreen.kt
-|  |  |  ├──theme
-|  |  |  |  ├──Color.kt
-|  |  |  |  ├──Theme.kt
-|  |  |  |  ├──Type.kt
-|  |  |  ├──PaqueteViewModel
-|  |  ├──utils
-|  |  |  ├──ImafeUtils
-|  |  ├──viewmodel
-|  |  |  ├──ProfileViewModel.kt
-|  |  ├──MainActivity
-|  |  ├──TravelGoApp.kt
-|  ├──res
-├──Gradle Screipts
+4. localizacion
+permisos de ubicacion
+un fallback implementado en caso de que el usuario no otorgue los permisos
+y recursos nativos para el dispositivo
 
--Gestión de estado
-  -StateFlow y MutableStateFlow son usados para emitir estados de carga, exito o error.
-  -los ViewModel centralizan la lógica y exponen estados observables para compose
+5. persistencia
+Usamos datastore para guardar tanto la sesión de los usuarios y las preferencias basicas
 
--Navegación
-  -La implementamos con NavHost y NavController
-  - el flujo principal siendo el login -> Home -> Perfil
+6. integración con microservicio backend
+comunicacion con el backend spring boot propio
+incluyendo operaciones CRUD completas sobre los destinos o paquetes
 
-4. Funcionalidades
-  - Formulario validado de inicio de sesión y registro.  
-  - Navegación entre pantallas con backstack funcional.  
-  - Gestión de estado mediante ViewModel y StateFlow (carga, éxito, error).  
-  - Persistencia local (almacenamiento de sesión y perfil con `SharedPreferences`).  
-  - Almacenamiento de imagen de perfil utilizando Coil.  
-  - Recursos nativos: acceso a cámara y galería (con permisos y fallback).  
-  - Animaciones con propósito (transiciones entre pantallas).  
-  - Consumo de API externa** con Retrofit, incluyendo el endpoint `/me`.
+7.Consumo de API externa 
+Se consulta el clima usando OpenWeather API
+se deberia de mostrar la informacion del clima relacionada con el destino
 
-5. Endpoints
-Base URL: http://10.0.2.2:8080/api/
-| Método | Ruta | Body | Respuesta |
-| ------ | ---- | ----- | ---------- |
-| **POST** | `/auth/signup` | `{ email, password, name }` | 201 → `{ authToken, user: { id, email, name } }` |
-| **POST** | `/auth/login` | `{ email, password }` | 200 → `{ authToken, user: { id, email } }` |
-| **GET** | `/auth/me` | - (requiere `Authorization` header) | 200 → `{ id, email, name, avatarUrl }` |
+Endpoints utilizados
 
-6. User flows
-Flujo principal de usuario
-  -inicio de sesión: el usuario ingresa correo y contraseña, si llega a ser válido pasa al       home pero si falla, muestra un mensaje de error
+Api Externa:OpenWeather
+Base URL: https://api.openweathermap.org/data/2.5
 
-  -Home: muestra las opciones paquetes sustentables, reservar experiencias y tu perfil
-  -paquetes sustentables, muestra viajes que se pueden realizar en el momento
-  -reservar experiencias, permite el realizar reservas de los viajes en los paquetes             sustentables para elejir una fecha ideal para tus necesidades
-  -tu perfil, personaliza tu perfil para mostrar tu esencia (y algunos datos relevantes)
-  -cerrar sesión, limpia los datos y te devuelve al login
+Endpont principal usado:
+GET /weather?q={city}&appid={API_KEY}&units=metric&lang=es
 
-7. autores
+Paramentros
+https://api.openweathermap.org/data/2.5/weather?q=Santiago&appid=TU_API_KEY
 
-  -Sebastián garrido y sebastián Aird
-  -desarrollo de aplicaciones móviles -EP3 2025
+Microservicio Backend (Spring Boot)
+Base URL: http://localhost:8080/api
 
-8. reflexion
+Pasos para ejecutar el proyecto backend (spring boot)
+abrir el proyecto backend en intelliJ/eclipse
+configurar JDK 17 o superior
+ejecutar la clase principal (TravelGoApplication)
+confirmar que el backend esta en: http://localhost:8080
 
--durante el tiempo que estubimos trabajando en este trabajo aprendimos no solo a optimizar nuestros tiempos de mejor manera, pero tambien el colaborar en caso de que alguien necesite apoyo en algunas areas, tambien el priorizar lo esencial antes que los pequeños detalles
+Aplicacion android
+
+Ejecución
+Abir la carpeta del proyecto en Android Studio
+Sincronizar Gradle
+Ejecutar en dispositivo fisico o emulador Run
+
+para generar APK firmado
+Build > Generate Signed Bundle / APK
+Seleccionar APK
+Elegir tu archivo .jks
+Ingresar contraseña y alias
+Generar en: app/release/app-release.apk
+
+Capturas (Agregar Aquí)
+APK firmado
+(Agregar aquí captura del APK firmado)
+
+Archivo .jks
+(Agregar aquí captura del archivo .jks)
