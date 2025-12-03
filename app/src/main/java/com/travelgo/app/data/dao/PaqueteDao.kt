@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PaqueteDao {
-    @Query(value = "SELECT * FROM paquete ORDER BY creadoAt DESC")
+
+    @Query("SELECT * FROM paquetes ORDER BY creadoAt DESC")
     fun getAll(): Flow<List<PaqueteLocal>>
 
-    @Query("SELECT * FROM paquete WHERE id = :id LIMIT 1")
-    suspend fun getById(id: Int): PaqueteLocal?
+    @Query("SELECT * FROM paquetes WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): PaqueteLocal?
 
     @Insert
     suspend fun insert(paquete: PaqueteLocal): Long

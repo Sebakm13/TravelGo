@@ -25,12 +25,13 @@ object DatabaseProvider {
 // AppDatabase (base de datos)
 @Database(
     entities = [PaqueteLocal::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun paqueteLocal(): PaqueteDao
 }
+
 
 // PaqueteDao (DAO)
 @Dao

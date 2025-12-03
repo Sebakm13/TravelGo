@@ -5,7 +5,8 @@ import com.travelgo.app.data.db.PaqueteLocal
 fun PaqueteLocal.toDomain(): Paquete {
     return Paquete(
         id = this.id,
-        titulo = this.titulo,
+        nombre = this.nombre,
+        destino = this.destino,
         descripcion = this.descripcion,
         precio = this.precio
     )
@@ -14,7 +15,8 @@ fun PaqueteLocal.toDomain(): Paquete {
 fun Paquete.toLocal(): PaqueteLocal {
     return PaqueteLocal(
         id = this.id,
-        titulo = this.titulo,
+        nombre = this.nombre,
+        destino = this.destino,
         descripcion = this.descripcion,
         precio = this.precio
     )

@@ -1,14 +1,10 @@
 package com.travelgo.app.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.travelgo.app.data.db.PaqueteLocal
 import com.travelgo.app.ui.PaqueteViewModel
@@ -24,7 +20,7 @@ fun PaqueteEditScreen(
 ) {
     var paquete by remember { mutableStateOf<PaqueteLocal?>(null) }
 
-    // Si estamos editando, cargar el paquete
+    // Cargar paquete si se va a editar
     LaunchedEffect(editId) {
         if (editId != null) {
             viewModel.getById(editId) { result ->
@@ -33,7 +29,9 @@ fun PaqueteEditScreen(
         }
     }
 
+    // Campos editables
     var nombre by remember { mutableStateOf(paquete?.nombre ?: "") }
+    var destino by remember { mutableStateOf(paquete?.destino ?: "") }
     var precio by remember { mutableStateOf(paquete?.precio?.toString() ?: "") }
     var descripcion by remember { mutableStateOf(paquete?.descripcion ?: "") }
 
@@ -41,10 +39,11 @@ fun PaqueteEditScreen(
         topBar = {
             TopBarWithBack(
                 navController = navController,
-                title = "Mi Perfil"
+                title = if (editId == null) "Nuevo Paquete" else "Editar Paquete"
             )
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -57,6 +56,13 @@ fun PaqueteEditScreen(
                 value = nombre,
                 onValueChange = { nombre = it },
                 label = { Text("Nombre del paquete") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = destino,
+                onValueChange = { destino = it },
+                label = { Text("Destino") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -77,29 +83,29 @@ fun PaqueteEditScreen(
                 maxLines = 4
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             Button(
                 onClick = {
-                    val precioInt = precio.toIntOrNull() ?: 0
+                    val precioDouble = precio.toDoubleOrNull() ?: 0.0
 
                     if (editId == null) {
-                        // Crear nuevo paquete
+                        // Crear paquete nuevo
                         viewModel.insert(
                             PaqueteLocal(
                                 nombre = nombre,
+                                destino = destino,
                                 descripcion = descripcion,
-                                precio = precioInt
+                                precio = precioDouble
                             )
                         )
                     } else {
-                        // Actualizar paquete existente
+                        // Actualizar paquete
                         viewModel.update(
                             PaqueteLocal(
                                 id = editId,
                                 nombre = nombre,
+                                destino = destino,
                                 descripcion = descripcion,
-                                precio = precioInt,
+                                precio = precioDouble,
                                 creadoAt = paquete?.creadoAt ?: System.currentTimeMillis()
                             )
                         )
