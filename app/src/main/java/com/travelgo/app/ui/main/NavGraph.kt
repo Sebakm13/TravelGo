@@ -2,6 +2,7 @@ package com.travelgo.app.ui.main
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,13 +33,19 @@ fun TravelNavGraph(
 
         composable("detail/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")?.toLongOrNull() ?: return@composable
+
             PaqueteDetailScreen(
                 navController = navController,
                 id = id,
-                viewModel = viewModel,
-                onEdit = { navController.navigate("edit/$id") }
+                onReservar = {
+                    navController.navigate("reserva/$id")
+                },
+                onEdit = {
+                    navController.navigate("edit/$id")
+                }
             )
         }
+
 
         composable(
             route = "edit/{id}",
@@ -70,5 +77,34 @@ fun TravelNavGraph(
             PaqueteCrudScreen(navController)
         }
 
+        composable(
+            route = "reserva/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: 0L
+
+            ReservaScreen(
+                navController = navController,
+                paqueteId = id
+            )
+        }
+
+        composable(
+            route = "detail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: 0L
+
+            PaqueteDetailScreen(
+                navController = navController,
+                id = id,
+                onReservar = {
+                    navController.navigate("reserva/$id")
+                },
+                onEdit = {
+                    navController.navigate("edit/$id")
+                }
+            )
+        }
     }
 }

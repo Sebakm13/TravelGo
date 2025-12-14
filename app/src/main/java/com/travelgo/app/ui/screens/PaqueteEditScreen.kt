@@ -83,6 +83,15 @@ fun PaqueteEditScreen(
                 maxLines = 4
             )
 
+            LaunchedEffect(paquete) {
+                paquete?.let {
+                    nombre = it.nombre
+                    destino = it.destino
+                    precio = it.precio.toString()
+                    descripcion = it.descripcion
+                }
+            }
+
             Button(
                 onClick = {
                     val precioDouble = precio.toDoubleOrNull() ?: 0.0

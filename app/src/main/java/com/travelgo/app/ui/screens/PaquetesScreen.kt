@@ -90,7 +90,12 @@ fun PaquetesScreen(navController: NavController) {
                     contentPadding = PaddingValues(bottom = 90.dp)
                 ) {
                     items(demoPaquetes) { paquete ->
-                        PaqueteCard(paquete)
+                        PaqueteCard(
+                            paquete = paquete,
+                            onClick = {
+                                navController.navigate("paquete_detail/${paquete.id}")
+                            }
+                        )
                     }
                 }
             }
@@ -99,7 +104,10 @@ fun PaquetesScreen(navController: NavController) {
 }
 
 @Composable
-private fun PaqueteCard(paquete: PaqueteTuristico) {
+private fun PaqueteCard(
+    paquete: PaqueteTuristico,
+    onClick: () -> Unit
+) {
     var pressed by remember { mutableStateOf(false) }
     val cardColor by animateColorAsState(
         targetValue = if (pressed)
@@ -112,12 +120,9 @@ private fun PaqueteCard(paquete: PaqueteTuristico) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(22.dp))
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
+            .clickable {
                 pressed = true
-
+                onClick()
             }
             .padding(0.dp),
         colors = CardDefaults.cardColors(containerColor = cardColor),

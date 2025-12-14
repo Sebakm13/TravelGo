@@ -16,23 +16,48 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.travelgo.app.data.Repository.PaqueteRepository
+import com.travelgo.app.data.db.DatabaseProvider
+import com.travelgo.app.ui.PaqueteViewModel
+import com.travelgo.app.ui.PaqueteViewModelFactory
 import com.travelgo.app.ui.components.TopBarWithBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.travelgo.app.data.db.PaqueteLocal
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ReservaScreen(navController: NavController) {
+fun ReservaScreen(
+    navController: NavController,
+    paqueteId: Long
+)
+ {
+    val context = LocalContext.current
+    val db = DatabaseProvider.getDatabase(context)
+    val dao = db.paqueteLocal()
+    val repo = PaqueteRepository(dao)
 
-    val scope = rememberCoroutineScope()
+    val viewModel: PaqueteViewModel = viewModel(
+        factory = PaqueteViewModelFactory(repo)
+    )
+     var paquete by remember { mutableStateOf<PaqueteLocal?>(null) }
+
+     LaunchedEffect(paqueteId) {
+         viewModel.getById(paqueteId) { result ->
+             paquete = result
+         }
+     }
+
+     val scope = rememberCoroutineScope()
 
     var fecha by rememberSaveable { mutableStateOf("") }
     var personas by rememberSaveable { mutableStateOf("") }
-    var paquete by rememberSaveable { mutableStateOf("") }
 
     var fechaError by remember { mutableStateOf<String?>(null) }
     var personasError by remember { mutableStateOf<String?>(null) }
@@ -41,14 +66,17 @@ fun ReservaScreen(navController: NavController) {
     var loading by remember { mutableStateOf(false) }
     var success by remember { mutableStateOf(false) }
 
+
     // Validación
     fun validate(): Boolean {
         var ok = true
 
-        if (paquete.isBlank()) {
-            paqueteError = "Debes seleccionar un paquete"
+        if (paquete == null) {
+            paqueteError = "No se pudo cargar el paquete"
             ok = false
-        } else paqueteError = null
+        } else {
+            paqueteError = null
+        }
 
         if (fecha.isBlank()) {
             fechaError = "Debes indicar una fecha válida"
@@ -125,14 +153,16 @@ fun ReservaScreen(navController: NavController) {
 
                     // ==== PAQUETE ====
                     OutlinedTextField(
-                        value = paquete,
-                        onValueChange = { paquete = it },
+                        value = paquete?.nombre ?: "",
+                        onValueChange = {},
+                        enabled = false,
                         label = { Text("Paquete turístico") },
                         leadingIcon = { Icon(Icons.Default.TravelExplore, contentDescription = null) },
                         isError = paqueteError != null,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp)
                     )
+
                     AnimatedVisibility(paqueteError != null) {
                         Text(
                             paqueteError.orEmpty(),

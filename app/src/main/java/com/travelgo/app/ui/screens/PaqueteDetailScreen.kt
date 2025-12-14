@@ -9,10 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.travelgo.app.data.Repository.PaqueteRepository
+import com.travelgo.app.data.db.DatabaseProvider
 import com.travelgo.app.data.db.PaqueteLocal
 import com.travelgo.app.ui.PaqueteViewModel
+import com.travelgo.app.ui.PaqueteViewModelFactory
 import com.travelgo.app.ui.components.TopBarWithBack
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,9 +25,18 @@ import com.travelgo.app.ui.components.TopBarWithBack
 fun PaqueteDetailScreen(
     navController: NavController,
     id: Long,
-    viewModel: PaqueteViewModel,
+    onReservar: () -> Unit,
     onEdit: () -> Unit
 ) {
+    val context = LocalContext.current
+    val db = DatabaseProvider.getDatabase(context)
+    val dao = db.paqueteLocal()
+    val repo = PaqueteRepository(dao)
+
+    val viewModel: PaqueteViewModel = viewModel(
+        factory = PaqueteViewModelFactory(repo)
+    )
+
     var paquete by remember { mutableStateOf<PaqueteLocal?>(null) }
 
     // Cargar el paquete desde el ViewModel
@@ -30,6 +44,10 @@ fun PaqueteDetailScreen(
         viewModel.getById(id) { result ->
             paquete = result
         }
+    }
+
+    Button(onClick = onReservar) {
+        Text("Reservar este viaje")
     }
 
     Scaffold(
@@ -45,6 +63,15 @@ fun PaqueteDetailScreen(
             Text("Descripción: ${paquete?.descripcion}")
 
             Spacer(Modifier.height(16.dp))
+
+            Button(
+                enabled = paquete != null,
+                onClick = onReservar
+            ) {
+                Text("Reservar este viaje")
+            }
+
+            Spacer(Modifier.height(12.dp))
 
             Button(
                 enabled = paquete != null,

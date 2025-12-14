@@ -1,9 +1,12 @@
 package com.travelgo.app.ui
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.screens.*
 
@@ -11,12 +14,14 @@ import com.travelgo.app.ui.screens.*
 fun Navigation(
     navController: NavHostController,
     prefs: UserPrefsDataStore,
-    viewModel: PaqueteViewModel // Pasar el ViewModel aquí
-) {
+    viewModel: PaqueteViewModel
+)
+ {
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
+
         // ---------- AUTH ----------
         composable("login") {
             LoginScreen(navController = navController, prefs = prefs)
@@ -31,43 +36,57 @@ fun Navigation(
             HomeScreen(navController = navController, prefs = prefs)
         }
 
-        // ---------- PAQUETES DEMO ----------
+        // ---------- PAQUETES (FLUJO REAL) ----------
         composable("paquetes") {
-            PaquetesScreen(navController = navController)
+            PaquetesScreen(
+                navController = navController,
+            )
         }
+
 
         // ---------- PERFIL ----------
         composable("perfil") {
-            PerfilScreen(navController = navController, prefs = prefs) // Pasar navController
+            PerfilScreen(navController = navController, prefs = prefs)
+        }
+
+        // ---------- DETALLE ----------
+        composable(
+            route = "paqueteDetalle/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: return@composable
+
+            PaqueteDetailScreen(
+                navController = navController,
+                id = id,
+                onReservar = {
+                    navController.navigate("reserva/$id")
+                },
+                onEdit = {
+                    navController.navigate("paqueteEditar/$id")
+                }
+            )
         }
 
         // ---------- RESERVA ----------
-        composable("reserva") {
-            ReservaScreen(navController = navController)
-        }
+        composable(
+            route = "reserva/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: return@composable
 
-        // ---------- PAQUETES CRUD ----------
-        composable("paquetesCrud") {
-            PaqueteListScreen(
-                viewModel = viewModel,
-                onAdd = { navController.navigate("paqueteEditar/0") },
-                onOpen = { id -> navController.navigate("paqueteDetalle/$id") }
+            ReservaScreen(
+                navController = navController,
+                paqueteId = id
             )
         }
 
-        composable("paqueteDetalle/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0
-
-            PaqueteDetailScreen(
-                id = id,
-                viewModel = viewModel,
-                onEdit = { navController.navigate("paqueteEditar/$id") },
-                navController = navController // Pasar navController
-            )
-        }
-
-        composable("paqueteEditar/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id")?.toLongOrNull() ?: 0
+        // ---------- EDITAR ----------
+        composable(
+            route = "paqueteEditar/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id") ?: 0L
 
             PaqueteEditScreen(
                 navController = navController,

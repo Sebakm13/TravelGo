@@ -61,9 +61,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    composable("reserva") {
-                        ReservaScreen(navController = navController)
-                    }
                     composable("perfil") {
                         PerfilScreen(navController = navController, prefs = prefs)
                     }
