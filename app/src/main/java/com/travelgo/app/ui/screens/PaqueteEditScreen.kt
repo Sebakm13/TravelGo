@@ -20,20 +20,32 @@ fun PaqueteEditScreen(
 ) {
     var paquete by remember { mutableStateOf<PaqueteLocal?>(null) }
 
-    // Cargar paquete si se va a editar
+    // Campos
+    var nombre by remember { mutableStateOf("") }
+    var destino by remember { mutableStateOf("") }
+    var precio by remember { mutableStateOf("") }
+    var descripcion by remember { mutableStateOf("") }
+
+    // Errores por campo
+    var nombreError by remember { mutableStateOf<String?>(null) }
+    var destinoError by remember { mutableStateOf<String?>(null) }
+    var precioError by remember { mutableStateOf<String?>(null) }
+    var descripcionError by remember { mutableStateOf<String?>(null) }
+
+    // Cargar paquete si es edición
     LaunchedEffect(editId) {
         if (editId != null) {
             viewModel.getById(editId) { result ->
                 paquete = result
+                result?.let {
+                    nombre = it.nombre
+                    destino = it.destino
+                    precio = it.precio.toString()
+                    descripcion = it.descripcion
+                }
             }
         }
     }
-
-    // Campos editables
-    var nombre by remember { mutableStateOf(paquete?.nombre ?: "") }
-    var destino by remember { mutableStateOf(paquete?.destino ?: "") }
-    var precio by remember { mutableStateOf(paquete?.precio?.toString() ?: "") }
-    var descripcion by remember { mutableStateOf(paquete?.descripcion ?: "") }
 
     Scaffold(
         topBar = {
@@ -49,84 +61,127 @@ fun PaqueteEditScreen(
                 .padding(innerPadding)
                 .padding(24.dp)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
             OutlinedTextField(
                 value = nombre,
-                onValueChange = { nombre = it },
+                onValueChange = {
+                    nombre = it
+                    nombreError = null
+                },
                 label = { Text("Nombre del paquete") },
+                isError = nombreError != null,
                 modifier = Modifier.fillMaxWidth()
             )
+            nombreError?.let {
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
 
             OutlinedTextField(
                 value = destino,
-                onValueChange = { destino = it },
+                onValueChange = {
+                    destino = it
+                    destinoError = null
+                },
                 label = { Text("Destino") },
+                isError = destinoError != null,
                 modifier = Modifier.fillMaxWidth()
             )
+            destinoError?.let {
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
 
             OutlinedTextField(
                 value = precio,
-                onValueChange = { precio = it },
+                onValueChange = {
+                    precio = it
+                    precioError = null
+                },
                 label = { Text("Precio (USD)") },
+                isError = precioError != null,
                 modifier = Modifier.fillMaxWidth()
             )
+            precioError?.let {
+                Text(it, color = MaterialTheme.colorScheme.error)
+            }
 
             OutlinedTextField(
                 value = descripcion,
-                onValueChange = { descripcion = it },
+                onValueChange = {
+                    descripcion = it
+                    descripcionError = null
+                },
                 label = { Text("Descripción") },
+                isError = descripcionError != null,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
                 maxLines = 4
             )
-
-            LaunchedEffect(paquete) {
-                paquete?.let {
-                    nombre = it.nombre
-                    destino = it.destino
-                    precio = it.precio.toString()
-                    descripcion = it.descripcion
-                }
+            descripcionError?.let {
+                Text(it, color = MaterialTheme.colorScheme.error)
             }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
-                    val precioDouble = precio.toDoubleOrNull() ?: 0.0
+                    // VALIDACIONES
+                    var isValid = true
+
+                    if (nombre.length < 3) {
+                        nombreError = "El nombre debe tener al menos 3 caracteres"
+                        isValid = false
+                    }
+
+                    if (destino.isBlank()) {
+                        destinoError = "El destino es obligatorio"
+                        isValid = false
+                    }
+
+                    val precioDouble = precio.toDoubleOrNull()
+                    if (precioDouble == null || precioDouble <= 0) {
+                        precioError = "Ingrese un precio válido"
+                        isValid = false
+                    }
+
+                    if (descripcion.isBlank()) {
+                        descripcionError = "La descripción es obligatoria"
+                        isValid = false
+                    }
+
+                    if (!isValid) return@Button
 
                     if (editId == null) {
-                        // Crear paquete nuevo
                         viewModel.insert(
                             PaqueteLocal(
                                 nombre = nombre,
                                 destino = destino,
                                 descripcion = descripcion,
-                                precio = precioDouble
+                                precio = precioDouble!!
                             )
                         )
                     } else {
-                        // Actualizar paquete
                         viewModel.update(
                             PaqueteLocal(
                                 id = editId,
                                 nombre = nombre,
                                 destino = destino,
                                 descripcion = descripcion,
-                                precio = precioDouble,
+                                precio = precioDouble!!,
                                 creadoAt = paquete?.creadoAt ?: System.currentTimeMillis()
                             )
                         )
                     }
 
                     onDone()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
+                }
             ) {
-                Text(text = if (editId == null) "Guardar" else "Actualizar")
+                Text(if (editId == null) "Guardar" else "Actualizar")
             }
         }
     }
