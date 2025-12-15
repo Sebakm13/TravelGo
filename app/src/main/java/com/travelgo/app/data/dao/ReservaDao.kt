@@ -13,6 +13,9 @@ interface ReservaDao {
     @Insert
     suspend fun insert(reserva: Reserva)
 
+    @Update
+    suspend fun update(reserva: Reserva)   // ✅ NUEVO
+
     @Delete
     suspend fun delete(reserva: Reserva)
 }

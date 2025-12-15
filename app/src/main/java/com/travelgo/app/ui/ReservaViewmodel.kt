@@ -22,6 +22,10 @@ class ReservaViewModel(
         viewModelScope.launch { repo.insert(reserva) }
     }
 
+    fun update(reserva: Reserva) {            // ✅ NUEVO
+        viewModelScope.launch { repo.update(reserva) }
+    }
+
     fun delete(reserva: Reserva) {
         viewModelScope.launch { repo.delete(reserva) }
     }

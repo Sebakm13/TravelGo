@@ -4,8 +4,15 @@ import com.travelgo.app.data.dao.ReservaDao
 import com.travelgo.app.data.db.Reserva
 import kotlinx.coroutines.flow.Flow
 
-class ReservaRepository(private val dao: ReservaDao) {
+class ReservaRepository(
+    private val dao: ReservaDao
+) {
+
     fun getAll(): Flow<List<Reserva>> = dao.getAll()
+
     suspend fun insert(reserva: Reserva) = dao.insert(reserva)
+
+    suspend fun update(reserva: Reserva) = dao.update(reserva) // ✅ NUEVO
+
     suspend fun delete(reserva: Reserva) = dao.delete(reserva)
 }
