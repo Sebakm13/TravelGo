@@ -1,82 +1,115 @@
-Nombre del Proyecto: Travelgo
+TravelGo – Aplicación de Turismo Sustentable
 
-una aplicacion móvil de turismo desarrollada por nosotros, incluytendo un diseño de interfaz, validaciones, navegación, persistencia, backend propio y un consumo de API externa
+Nombre de la aplicación: TravelGo
 
-Integrantes
-Sebastián Alejandro
-Sebastián Aird
+Aplicación móvil de turismo sustentable desarrollada como proyecto académico, que integra diseño de interfaz moderno, validaciones, navegación estructurada, persistencia local, backend propio con microservicios y consumo de una API externa.
 
-Funcionalidad del proyecto
 
-1.Autenticación
-tiene registro de usuario con validaciones de campos
-tiene un inicio de sesión persisntente gracias al DataStore
-además de un manejo de errores y mensajes de validación
+Integrantes del equipo
+- Sebastián Alejandro  
+- Sebastián Aird  
 
-2. Navegacion principal
-Navegacion con varias pantallas que usan Jetpack compose navigation
-pantalla principal con microinteracciones y animaciones
-acceso a una lista de paquetes turisticos
 
-3. gestion de paquetes turisticos
-listado completo de paquetes desde el backend
-detalle de cada paquete.
-tienen tambien una edicion,creacion y eliminacion de paquetes a travez de los microservicios
-y un manejo de estados: loading/success/error
+Funcionalidades del proyecto
 
-4. localizacion
-permisos de ubicacion
-un fallback implementado en caso de que el usuario no otorgue los permisos
-y recursos nativos para el dispositivo
+Autenticación de usuarios
+- Registro de usuarios con validación de campos.
+- Inicio de sesión persistente mediante DataStore.
+- Manejo de errores y mensajes de validación.
+- Cierre de sesión seguro.
 
-5. persistencia
-Usamos datastore para guardar tanto la sesión de los usuarios y las preferencias basicas
 
-6. integración con microservicio backend
-comunicacion con el backend spring boot propio
-incluyendo operaciones CRUD completas sobre los destinos o paquetes
+Navegación principal
+- Navegación entre pantallas usando **Jetpack Compose Navigation**.
+- Pantalla principal con animaciones y microinteracciones.
+- Acceso a una lista de paquetes turísticos.
+- Navegación jerárquica y controlada mediante `NavController`.
 
-7.Consumo de API externa 
-Se consulta el clima usando OpenWeather API
-se deberia de mostrar la informacion del clima relacionada con el destino
+
+Gestión de paquetes turísticos
+- Listado completo de paquetes turísticos obtenidos desde el backend.
+- Visualización del detalle de cada paquete.
+- Creación, edición y eliminación de paquetes.
+- Manejo de estados de la aplicación: **loading / success / error**.
+- Arquitectura MVVM con separación de responsabilidades.
+
+Localización (recurso nativo)
+- Solicitud de permisos de ubicación del dispositivo.
+- Obtención de la ubicación del usuario.
+- Implementación de fallback en caso de que el usuario no otorgue permisos.
+- Uso de recursos nativos del dispositivo Android.
+
+Persistencia local
+- Uso de DataStore para almacenar sesión del usuario y preferencias básicas.
+- Persistencia local con Room para manejo de datos.
+- Soporte para funcionamiento offline.
+
+Integración con microservicios backend
+- Comunicación con backend propio desarrollado en Spring Boot.
+- Operaciones CRUD completas sobre paquetes/destinos turísticos.
+- Consumo de backend a través de API Gateway.
+
+Consumo de API externa
+- Integración con OpenWeather API.
+- Consulta de información climática según el destino.
+- Visualización de datos de clima en la aplicación.
 
 Endpoints utilizados
 
-Api Externa:OpenWeather
-Base URL: https://api.openweathermap.org/data/2.5
+API externa – OpenWeather
+- Base URL: 
+- Endpoint principal:
+GET /destinations
+GET /destinations/{id}
+POST /destinations
+PUT /destinations/{id}
+DELETE /destinations/{id}
+- Ejemplo:
 
-Endpont principal usado:
-GET /weather?q={city}&appid={API_KEY}&units=metric&lang=es
+Microservicios Backend (Spring Boot + API Gateway)
 
-Paramentros
-https://api.openweathermap.org/data/2.5/weather?q=Santiago&appid=TU_API_KEY
+- Base URL (Gateway):
 
-Microservicio Backend (Spring Boot)
-Base URL: http://localhost:8080/api
+Instrucciones para ejecutar el proyecto
 
-Pasos para ejecutar el proyecto backend (spring boot)
-abrir el proyecto backend en intelliJ/eclipse
-configurar JDK 17 o superior
-ejecutar la clase principal (TravelGoApplication)
-confirmar que el backend esta en: http://localhost:8080
+Backend (Spring Boot)
+1. Abrir el proyecto backend en IntelliJ o Eclipse.
+2. Configurar JDK 17 o superior.
+3. Ejecutar la clase principal.
+4. Verificar en:
 
-Aplicacion android
 
-Ejecución
-Abir la carpeta del proyecto en Android Studio
-Sincronizar Gradle
-Ejecutar en dispositivo fisico o emulador Run
+ Aplicación Android
+1. Abrir el proyecto en Android Studio.
+2. Sincronizar Gradle.
+3. Ejecutar en emulador o dispositivo físico.
 
-para generar APK firmado
-Build > Generate Signed Bundle / APK
-Seleccionar APK
-Elegir tu archivo .jks
-Ingresar contraseña y alias
-Generar en: app/release/app-release.apk
+APK firmado y archivo .jks
 
-Capturas (Agregar Aquí)
-APK firmado
-(Agregar aquí captura del APK firmado)
+Generación del APK firmado
+1. Build > Generate Signed Bundle / APK
+2. Seleccionar APK
+3. Elegir archivo .jks
+4. Ingresar alias y contraseña
+5. Generar en:
 
-Archivo .jks
-(Agregar aquí captura del archivo .jks)
+Evidencia
+- Captura del APK firmado
+- Captura del archivo .jks
+
+Código fuente incluido
+
+Este repositorio público contiene:
+- Código fuente de la aplicación móvil Android.
+- Código fuente de los microservicios backend.
+- Código del API Gateway.
+
+Evidencia de trabajo colaborativo
+
+El desarrollo del proyecto se realizó de forma colaborativa utilizando GitHub:
+
+- Commits realizados por cada integrante.
+- Historial visible en el repositorio público.
+
+📸 Evidencia:
+- Captura del historial de commits filtrado por autor.
