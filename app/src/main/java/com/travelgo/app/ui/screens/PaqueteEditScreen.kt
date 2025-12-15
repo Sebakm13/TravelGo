@@ -1,9 +1,11 @@
 package com.travelgo.app.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.travelgo.app.data.db.PaqueteLocal
@@ -31,6 +33,21 @@ fun PaqueteEditScreen(
     var destinoError by remember { mutableStateOf<String?>(null) }
     var precioError by remember { mutableStateOf<String?>(null) }
     var descripcionError by remember { mutableStateOf<String?>(null) }
+
+    val isPressed = false
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        label = "button_scale"
+    )
+
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer(scaleX = scale, scaleY = scale),
+        onClick = { /* guardar */ }
+    ) {
+        Text("Guardar")
+    }
 
     // Cargar paquete si es edición
     LaunchedEffect(editId) {

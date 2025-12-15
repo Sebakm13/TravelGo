@@ -1,5 +1,8 @@
 package com.travelgo.app.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +23,19 @@ fun WeatherScreen(
             onClick = { viewModel.loadWeather("Santiago") }
         ) {
             Text("Cargar clima de Santiago")
+        }
+
+        AnimatedVisibility(
+            visible = state.isLoading,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            CircularProgressIndicator()
+        }
+
+        // 👇 AQUÍ VAN LOS RESULTADOS
+        state.data?.let { weather ->
+            Text(weather.name)
         }
 
         Spacer(modifier = Modifier.height(16.dp))

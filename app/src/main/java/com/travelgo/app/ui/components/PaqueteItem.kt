@@ -1,28 +1,29 @@
 package com.travelgo.app.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.travelgo.app.data.Paquete
+import com.travelgo.app.data.db.PaqueteLocal
 
 @Composable
 fun PaqueteItem(
-    paquete: Paquete,
+    paquete: PaqueteLocal,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        onClick = onClick
+            .padding(vertical = 10.dp)
+            .clickable { onClick() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // Cambia 'titulo' por 'nombre' o el nombre correcto en tu modelo
             Text(
-                text = paquete.nombre, // Usamos 'nombre' en lugar de 'titulo'
+                text = paquete.nombre,
                 style = MaterialTheme.typography.titleLarge
             )
 
