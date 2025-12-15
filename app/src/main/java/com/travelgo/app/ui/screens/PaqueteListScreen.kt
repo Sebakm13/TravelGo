@@ -62,7 +62,7 @@ fun PaqueteListScreen(
                         PaqueteItem(
                             paquete = paquete,
                             modifier = Modifier.animateItemPlacement(),
-                            onClick = { onOpen(paquete.id) }
+                            onClick = { onOpen(paquete.id) } // 👉 click imagen → detalle/reserva
                         )
                     }
                 }

@@ -17,22 +17,42 @@ fun TravelNavGraph(
     prefs: UserPrefsDataStore,
     navController: NavHostController = rememberNavController()
 ) {
-    NavHost(navController, startDestination = "list") {
 
+    NavHost(
+        navController = navController,
+        startDestination = "sustentables"
+    ) {
+
+        // ===============================
+        // 🌱 PAQUETES SUSTENTABLES
+        // ===============================
+        composable("sustentables") {
+            PaquetesSustentablesScreen(navController)
+        }
+
+        // ===============================
+        // 📦 LISTA PAQUETES (ROOM)
+        // ===============================
         composable("list") {
             PaqueteListScreen(
                 viewModel = viewModel,
                 onAdd = { navController.navigate("edit") },
-                onOpen = { id -> navController.navigate("detail/$id") }
+                onOpen = { id ->
+                    navController.navigate("detail/$id")
+                }
             )
         }
 
-        composable("register") {
-            RegisterScreen(navController = navController, prefs = prefs)
-        }
-
-        composable("detail/{id}") { backStack ->
-            val id = backStack.arguments?.getString("id")?.toLongOrNull() ?: return@composable
+        // ===============================
+        // 🔍 DETALLE PAQUETE
+        // ===============================
+        composable(
+            route = "detail/{id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.LongType }
+            )
+        ) { backStack ->
+            val id = backStack.arguments?.getLong("id") ?: 0L
 
             PaqueteDetailScreen(
                 navController = navController,
@@ -46,7 +66,9 @@ fun TravelNavGraph(
             )
         }
 
-
+        // ===============================
+        // ✏️ EDITAR / CREAR PAQUETE
+        // ===============================
         composable(
             route = "edit/{id}",
             arguments = listOf(
@@ -57,6 +79,7 @@ fun TravelNavGraph(
             )
         ) { backStack ->
             val idArg = backStack.arguments?.getString("id")?.toLongOrNull()
+
             PaqueteEditScreen(
                 navController = navController,
                 editId = idArg,
@@ -73,37 +96,47 @@ fun TravelNavGraph(
                 onDone = { navController.popBackStack() }
             )
         }
-        composable("crud") {
-            PaqueteCrudScreen(navController)
+
+        // ===============================
+        // 🧾 MIS RESERVAS
+        // ===============================
+        composable("mis_reservas") {
+            MisReservasScreen(navController = navController)
         }
 
+        // ===============================
+        // ✈️ RESERVA (DESDE SUSTENTABLES)
+        // ===============================
         composable(
-            route = "reserva/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getLong("id") ?: 0L
+            route = "reserva/{id}?nombre={nombre}&desc={desc}&precio={precio}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.LongType },
+                navArgument("nombre") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+                navArgument("desc") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+                navArgument("precio") {
+                    type = NavType.FloatType
+                    defaultValue = 0f
+                }
+            )
+        ) { backStack ->
+
+            val id = backStack.arguments?.getLong("id") ?: 0L
+            val nombre = backStack.arguments?.getString("nombre").orEmpty()
+            val desc = backStack.arguments?.getString("desc").orEmpty()
+            val precio = backStack.arguments?.getFloat("precio")?.toDouble() ?: 0.0
 
             ReservaScreen(
                 navController = navController,
-                paqueteId = id
-            )
-        }
-
-        composable(
-            route = "detail/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.LongType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getLong("id") ?: 0L
-
-            PaqueteDetailScreen(
-                navController = navController,
-                id = id,
-                onReservar = {
-                    navController.navigate("reserva/$id")
-                },
-                onEdit = {
-                    navController.navigate("edit/$id")
-                }
+                paqueteId = id,
+                nombreArg = nombre,
+                descArg = desc,
+                precioArg = precio
             )
         }
     }

@@ -1,12 +1,22 @@
 package com.travelgo.app.data.db
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
+import androidx.room.Room
 
-@Entity(tableName = "paquete")  // La tabla se llama "paquete" en la base de datos
-data class Paquete(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0, // El id se genera automáticamente
-    val nombre: String,
-    val descripcion: String,
-    val precio: Double
-)
+object DatabaseProvider {
+
+    @Volatile
+    private var INSTANCE: PaqueteDatabase? = null
+
+    fun getDatabase(context: Context): PaqueteDatabase =
+        INSTANCE ?: synchronized(this) {
+            INSTANCE ?: Room.databaseBuilder(
+                context.applicationContext,
+                PaqueteDatabase::class.java,
+                "travelgo_db"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
+                .also { INSTANCE = it }
+        }
+}

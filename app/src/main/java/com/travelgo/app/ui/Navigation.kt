@@ -77,7 +77,10 @@ fun Navigation(
 
             ReservaScreen(
                 navController = navController,
-                paqueteId = id
+                paqueteId = id,
+                nombreArg = TODO(),
+                descArg = TODO(),
+                precioArg = TODO()
             )
         }
 

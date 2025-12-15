@@ -3,14 +3,15 @@ package com.travelgo.app.data.db
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "paquetes")
-data class Paquete(
+@Entity(tableName = "reserva")
+data class Reserva(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val nombre: String,
-    val destino: String,
+    val paqueteId: Long,
+    val nombrePaquete: String,
     val descripcion: String,
     val precio: Double,
-    val imagenUri: String? = null,
+    val fecha: String,
+    val personas: Int,
     val creadoAt: Long = System.currentTimeMillis()
 )

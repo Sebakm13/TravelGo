@@ -19,42 +19,32 @@ import com.travelgo.app.ui.PaqueteViewModelFactory
 @Composable
 fun PaqueteCrudScreen(navController: NavController) {
 
-    // ========== ViewModel con Factory ==========
     val context = LocalContext.current
     val db = DatabaseProvider.getDatabase(context)
-    val dao = db.paqueteLocal()
-    val repo = PaqueteRepository(dao)
+    val repo = PaqueteRepository(db.paqueteDao())
 
     val viewModel: PaqueteViewModel = viewModel(
         factory = PaqueteViewModelFactory(repo)
     )
-    // ===========================================
 
     val paquetes by viewModel.paquetes.collectAsState()
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Administrar Paquetes") })
-        }
+        topBar = { TopAppBar(title = { Text("Administrar Paquetes") }) }
     ) { padding ->
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(paquetes) { p ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(Modifier.padding(16.dp)) {
-                            Text(p.nombre, style = MaterialTheme.typography.titleLarge)
-                            Text(p.descripcion, style = MaterialTheme.typography.bodyMedium)
-                            Text("$${p.precio}", style = MaterialTheme.typography.bodySmall)
-                        }
+            items(paquetes) { p ->
+                Card {
+                    Column(Modifier.padding(16.dp)) {
+                        Text(p.nombre, style = MaterialTheme.typography.titleLarge)
+                        Text(p.descripcion)
+                        Text("$${p.precio}")
                     }
                 }
             }

@@ -9,8 +9,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.travelgo.app.data.Repository.PaqueteRepository   // 👈 IMPORT CORRECTO
-import com.travelgo.app.data.db.DatabaseProvider            // 👈 IMPORT DB
+import com.travelgo.app.data.Repository.PaqueteRepository
+import com.travelgo.app.data.db.DatabaseProvider
 import com.travelgo.app.data.datastore.UserPrefsDataStore
 import com.travelgo.app.ui.PaqueteViewModel
 import com.travelgo.app.ui.PaqueteViewModelFactory
@@ -23,16 +23,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val context = LocalContext.current
-
-            // DataStore para perfil / login
             val prefs = remember { UserPrefsDataStore(context) }
 
-            // 🔹 Room + Repo para paquetes
             val db = remember { DatabaseProvider.getDatabase(context) }
-            val dao = db.paqueteLocal()
+            val dao = db.paqueteDao() // ✅ CAMBIO
             val repo = remember { PaqueteRepository(dao) }
 
-            // ViewModel de paquetes usando el repo correcto
             val viewModel: PaqueteViewModel = viewModel(
                 factory = PaqueteViewModelFactory(repo)
             )
@@ -40,29 +36,30 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             TravelGoTheme {
-                NavHost(
-                    navController = navController,
-                    startDestination = "login"
-                ) {
+                NavHost(navController = navController, startDestination = "login") {
+
                     composable("login") {
-                        LoginScreen(navController = navController, prefs = prefs)
+                        LoginScreen(navController, prefs)
                     }
+
                     composable("register") {
-                        RegisterScreen(navController = navController, prefs = prefs)
+                        RegisterScreen(navController, prefs)
                     }
+
                     composable("home") {
-                        HomeScreen(navController = navController, prefs = prefs)
+                        HomeScreen(navController, prefs)
                     }
 
                     composable("paquetes") {
-                        TravelNavGraph(
-                            viewModel = viewModel,
-                            prefs = prefs
-                        )
+                        TravelNavGraph(viewModel, prefs)
                     }
 
                     composable("perfil") {
-                        PerfilScreen(navController = navController, prefs = prefs)
+                        PerfilScreen(navController, prefs)
+                    }
+
+                    composable("mis_reservas") {
+                        MisReservasScreen(navController)
                     }
                 }
             }

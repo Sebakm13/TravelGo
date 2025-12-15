@@ -71,21 +71,13 @@ fun HomeScreen(
                         )
                     )
                 )
-                .padding(24.dp),
-            verticalArrangement = Arrangement.Top
+                .padding(24.dp)
         ) {
+
             Text(
                 text = "Hola, $nombre 👋",
                 style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
-            )
-
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = "Explora experiencias con impacto positivo 🌱",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
 
             Spacer(Modifier.height(28.dp))
@@ -93,9 +85,12 @@ fun HomeScreen(
             FeatureCard(
                 icon = Icons.Default.FlightTakeoff,
                 title = "Paquetes sustentables",
-                desc = "Viajes que apoyan comunidades locales y reducen impacto ambiental.",
+                desc = "Viajes con impacto positivo.",
                 accent = MaterialTheme.colorScheme.primary,
-                onClick = { navController.navigate("paquetes") }
+                onClick = {
+                    // ✅ CAMBIO CLAVE (YA NO CRASHEA)
+                    navController.navigate("paquetes")
+                }
             )
 
             Spacer(Modifier.height(18.dp))
@@ -103,7 +98,7 @@ fun HomeScreen(
             FeatureCard(
                 icon = Icons.Default.LocalActivity,
                 title = "Reservar experiencia",
-                desc = "Encuentra y gestiona tus próximas aventuras.",
+                desc = "Gestiona tus aventuras.",
                 accent = MaterialTheme.colorScheme.secondary,
                 onClick = { navController.navigate("reserva") }
             )
@@ -113,20 +108,10 @@ fun HomeScreen(
             FeatureCard(
                 icon = Icons.Default.AccountCircle,
                 title = "Tu perfil",
-                desc = "Actualiza tu foto, ubicación y preferencias.",
+                desc = "Configura tu cuenta.",
                 accent = MaterialTheme.colorScheme.tertiary,
                 onClick = { navController.navigate("perfil") }
             )
-
-            Spacer(Modifier.height(40.dp))
-
-            AnimatedVisibility(visible = true) {
-                Text(
-                    text = "TravelGo SPA • Turismo comunitario y movilidad responsable",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                )
-            }
         }
     }
 }
@@ -150,45 +135,25 @@ private fun FeatureCard(
         modifier = Modifier
             .fillMaxWidth()
             .scale(scale)
-            .clickable(
-                onClick = {
-                    pressed = true
-                    onClick()
-                    pressed = false
-                }
-            ),
+            .clickable {
+                pressed = true
+                onClick()
+                pressed = false
+            },
         colors = CardDefaults.cardColors(containerColor = bgColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
         shape = RoundedCornerShape(20.dp)
     ) {
         Row(
             modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = accent,
-                modifier = Modifier.size(40.dp)
-            )
-
+            Icon(icon, null, tint = accent, modifier = Modifier.size(40.dp))
             Spacer(Modifier.width(16.dp))
-
             Column {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = accent,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(Modifier.height(6.dp))
-                Text(
-                    text = desc,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
+                Text(title, fontWeight = FontWeight.SemiBold, color = accent)
+                Text(desc, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
 }
-

@@ -3,44 +3,42 @@ package com.travelgo.app.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.travelgo.app.data.Repository.PaqueteRepository
-import com.travelgo.app.data.db.PaqueteLocal
+import com.travelgo.app.data.db.Paquete
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class PaqueteViewModel(private val repository: PaqueteRepository) : ViewModel() {
+class PaqueteViewModel(
+    private val repository: PaqueteRepository
+) : ViewModel() {
 
-    // Flow -> StateFlow para Compose
     val paquetes = repository.getAll().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
-    fun insert(paquete: PaqueteLocal) {
+    fun insert(paquete: Paquete) {
         viewModelScope.launch {
             repository.insert(paquete)
         }
     }
 
-    fun update(paquete: PaqueteLocal) {
+    fun update(paquete: Paquete) {
         viewModelScope.launch {
             repository.update(paquete)
         }
     }
 
-    fun delete(paquete: PaqueteLocal) {
+    fun delete(paquete: Paquete) {
         viewModelScope.launch {
             repository.delete(paquete)
         }
     }
 
-    fun getById(id: Long, onResult: (PaqueteLocal?) -> Unit) {
+    fun getById(id: Long, onResult: (Paquete?) -> Unit) {
         viewModelScope.launch {
-            val paquete = repository.getById(id)
-            onResult(paquete)
+            onResult(repository.getById(id))
         }
     }
-
 }
-
