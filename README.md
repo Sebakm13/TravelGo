@@ -91,11 +91,12 @@ Generación del APK firmado
 2. Seleccionar APK
 3. Elegir archivo .jks
 4. Ingresar alias y contraseña
-5. Generar en:
+5. Generar en: alguna carpeta
 
 Evidencia
 - Captura del APK firmado
 - Captura del archivo .jks
+[Evidencia APK.zip](https://github.com/user-attachments/files/24173237/Evidencia.APK.zip)
 
 Código fuente incluido
 
