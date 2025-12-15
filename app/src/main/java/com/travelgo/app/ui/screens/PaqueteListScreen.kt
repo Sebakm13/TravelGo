@@ -8,10 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.travelgo.app.ui.PaqueteViewModel
-import com.travelgo.app.ui.components.TopBarWithBack
-import kotlinx.coroutines.flow.forEach
 
 @Composable
 fun PaqueteListScreen(
