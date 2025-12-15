@@ -54,21 +54,26 @@ Consumo de API externa
 - Consulta de información climática según el destino.
 - Visualización de datos de clima en la aplicación.
 
-Endpoints utilizados
+Microservicio Backend – Spring Boot
 
-API externa – OpenWeather
-- Base URL: 
-- Endpoint principal:
-GET /destinations
-GET /destinations/{id}
-POST /destinations
-PUT /destinations/{id}
+El backend de TravelGo fue desarrollado con Spring Boot y expone una API REST
+para la gestión de destinos turísticos. Utiliza una base de datos H2 en memoria
+para persistencia y sigue una arquitectura en capas.
+
+Base URL:
+http://localhost:8081/api
+
+Endpoints disponibles:
+GET    /destinations
+GET    /destinations/{id}
+POST   /destinations
+PUT    /destinations/{id}
 DELETE /destinations/{id}
-- Ejemplo:
 
-Microservicios Backend (Spring Boot + API Gateway)
+El correcto funcionamiento fue validado mediante Postman, evidenciando
+respuestas HTTP 200 y 201 según corresponda.
+[Evidencia postman.zip](https://github.com/user-attachments/files/24175261/Evidencia.postman.zip)
 
-- Base URL (Gateway):
 
 Instrucciones para ejecutar el proyecto
 
