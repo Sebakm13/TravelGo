@@ -97,11 +97,14 @@ fun HomeScreen(
 
             FeatureCard(
                 icon = Icons.Default.LocalActivity,
-                title = "Reservar experiencia",
-                desc = "Gestiona tus aventuras.",
+                title = "Reservas",
+                desc = "Revisa y gestiona tus reservas.",
                 accent = MaterialTheme.colorScheme.secondary,
-                onClick = { navController.navigate("reserva") }
+                onClick = {
+                    navController.navigate("mis_reservas") // ✅ VA A LAS RESERVAS
+                }
             )
+
 
             Spacer(Modifier.height(18.dp))
 

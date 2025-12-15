@@ -28,16 +28,41 @@ fun PaquetesSustentablesScreen(
 ) {
 
     val lugares = listOf(
-        PaqueteSustentableUI(201, "Torres del Paine", "Parque nacional con senderos y turismo sustentable.", 250000,
-            "https://images.unsplash.com/photo-1501785888041-af3ef285b470"),
-        PaqueteSustentableUI(202, "San Pedro de Atacama", "Desierto, géiseres y energía limpia.", 180000,
-            "https://images.unsplash.com/photo-1544986581-efac024faf62"),
-        PaqueteSustentableUI(203, "Isla de Pascua", "Cultura ancestral y protección ambiental.", 320000,
-            "https://images.unsplash.com/photo-1587502536263-9298c53a2d8c"),
-        PaqueteSustentableUI(204, "Valle del Elqui", "Astroturismo y pueblos ecológicos.", 140000,
-            "https://images.unsplash.com/photo-1616512659458-6c7f1a3c1e1c"),
-        PaqueteSustentableUI(205, "Chiloé", "Palafitos, cultura chilota y naturaleza.", 160000,
-            "https://images.unsplash.com/photo-1596495577886-d920f1fb7238")
+        PaqueteSustentableUI(
+            201,
+            "Torres del Paine",
+            "Parque nacional con senderos y turismo sustentable.",
+            250000,
+            "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSw_j4uC1kE5VGsMlOC-uWIdkv8lRK3LzuRtj5Bwah71BCn3izKxCBbk_4H1Y5pMpdsGEbcfB0qeZhMBgVwi35-PJ_XjhRzdFjMblwOhneUO2L5NXLv1yd0LkqPEKjQIgdadrSHT6A=s680-w680-h510-rw"
+        ),
+        PaqueteSustentableUI(
+            202,
+            "San Pedro de Atacama",
+            "Desierto, géiseres y energía limpia.",
+            180000,
+            "https://www.diarioantofagasta.cl/wp-content/uploads/2021/09/San-Pedro-De-Atacama-1024x684.jpg"
+        ),
+        PaqueteSustentableUI(
+            203,
+            "Isla de Pascua",
+            "Cultura ancestral y protección ambiental.",
+            320000,
+            "https://www.tangol.com/Blog/Fotos/que-hacer-en-isla-de-pascua_0_201711131023220-resized.webp"
+        ),
+        PaqueteSustentableUI(
+            204,
+            "Valle del Elqui",
+            "Astroturismo y pueblos ecológicos.",
+            140000,
+            "https://storage.googleapis.com/chile-travel-cdn/2021/07/Valle-del-Elqui_5.jpg"
+        ),
+        PaqueteSustentableUI(
+            205,
+            "Chiloé",
+            "Palafitos, cultura chilota y naturaleza.",
+            160000,
+            "https://www.skorpios.cl/wp-content/uploads/Isla-de-Chilo%C3%A9-780x400.jpg"
+        )
     )
 
     Scaffold(
@@ -65,18 +90,12 @@ fun PaquetesSustentablesScreen(
                                 .fillMaxWidth()
                                 .height(200.dp)
                                 .clickable {
-                                    val nombre = Uri.encode(lugar.nombre)
-                                    val desc = Uri.encode(lugar.descripcion)
-                                    val img = Uri.encode(lugar.imagenUrl)
-
                                     navController.navigate(
                                         "reserva/${lugar.id}" +
                                                 "?nombre=${Uri.encode(lugar.nombre)}" +
                                                 "&desc=${Uri.encode(lugar.descripcion)}" +
-                                                "&precio=${lugar.precio.toDouble()}"
+                                                "&precio=${lugar.precio}"
                                     )
-
-
                                 }
                         )
 

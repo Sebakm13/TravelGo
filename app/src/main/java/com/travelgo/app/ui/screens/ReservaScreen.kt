@@ -41,6 +41,9 @@ fun ReservaScreen(
     var fecha by rememberSaveable { mutableStateOf("") }
     var personas by rememberSaveable { mutableStateOf("") }
 
+    // 👉 NUEVO: controla el mensaje de éxito
+    var showSuccessDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Reserva", fontWeight = FontWeight.Bold) })
@@ -100,12 +103,48 @@ fun ReservaScreen(
                                 personas = personas.toInt()
                             )
                         )
-                        navController.navigate("mis_reservas")
+                        // 👉 NO navega aún
+                        showSuccessDialog = true
                     }
                 }
             ) {
                 Text("Reservar ahora")
             }
         }
+    }
+
+    // ============================
+    // ✅ DIÁLOGO DE ÉXITO
+    // ============================
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("¡Reserva confirmada! 🎉") },
+            text = {
+                Text("Tu reserva fue realizada correctamente.\nPuedes revisarla en la sección Reservas.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showSuccessDialog = false
+                        navController.navigate("mis_reservas") {
+                            popUpTo("sustentables") { inclusive = false }
+                        }
+                    }
+                ) {
+                    Text("Ver mis reservas")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showSuccessDialog = false
+                        navController.popBackStack()
+                    }
+                ) {
+                    Text("Volver")
+                }
+            }
+        )
     }
 }
